@@ -1,0 +1,85 @@
+# ======================================================
+# WordPress Git Ignore — clean repo for development
+# ======================================================
+
+# Core WordPress files (installed via wp-cli or manually)
+wordpress/
+wp-admin/
+wp-includes/
+
+# Ignore all files in root except wp-content, config sample & custom files
+/*
+!.gitignore
+!wp-content/
+!wp-config-sample.php
+!README.md
+!readme.txt
+!index.php
+
+# ======================================================
+# wp-content
+# ======================================================
+
+# Ignore everything in wp-content except themes, plugins, mu-plugins
+wp-content/*
+!wp-content/themes/
+!wp-content/plugins/
+!wp-content/mu-plugins/
+!wp-content/uploads/.gitkeep
+
+# ======================================================
+# Uploads & cache (large files)
+# ======================================================
+wp-content/uploads/
+wp-content/cache/
+wp-content/backups/
+wp-content/upgrade/
+wp-content/languages/
+wp-content/ai1wm-backups/
+wp-content/wp-rocket-config/
+wp-content/et-cache/
+
+# ======================================================
+# Environment & config files
+# ======================================================
+wp-config.php
+.env
+.env.*
+*.env
+
+# ======================================================
+# OS and IDE files
+# ======================================================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# ======================================================
+# Composer & Node
+# ======================================================
+/vendor/
+/node_modules/
+/package-lock.json
+/yarn.lock
+composer.lock
+
+# ======================================================
+# Logs & debug
+# ======================================================
+*.log
+debug.log
+error_log
+npm-debug.log*
+
+# ======================================================
+# Miscellaneous
+# ======================================================
+.sass-cache/
+.cache/
+.idea/
+.vscode/
+*.swp
+*.bak
+*.tmp
+*.orig
