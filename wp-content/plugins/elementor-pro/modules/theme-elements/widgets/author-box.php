@@ -1593,7 +1593,7 @@ class Author_Box extends Base {
 
 				<?php if ( $print_link ) : ?>
 					<a <?php $this->print_render_attribute_string( 'button' ); ?>>
-						<?php echo wp_kses_post( $settings['link_text'] ); ?>
+						<?php $this->print_unescaped_setting( 'link_text' ); ?>
 					</a>
 				<?php endif; ?>
 			</div>

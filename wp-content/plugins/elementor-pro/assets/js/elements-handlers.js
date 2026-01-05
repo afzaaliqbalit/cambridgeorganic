@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.32.0 - 16-09-2025 */
+/*! elementor-pro - v3.27.0 - 06-02-2025 */
 "use strict";
 (self["webpackChunkelementor_pro"] = self["webpackChunkelementor_pro"] || []).push([["elements-handlers"],{
 
@@ -836,14 +836,10 @@ class BaseFilterFrontendModule extends elementorModules.Module {
   fetchUpdatedLoopWidgetMarkup(widgetId, filterId) {
     return fetch(`${elementorProFrontend.config.urls.rest}elementor-pro/v1/refresh-loop`, this.getFetchArgumentsForLoopUpdate(widgetId, filterId));
   }
-  createElementFromHTMLString(widgetContainerHTMLString) {
-    const div = document.createElement('div');
-    if (!widgetContainerHTMLString) {
-      div.classList.add('elementor-widget-container');
-      return div;
-    }
-    div.innerHTML = widgetContainerHTMLString.trim();
-    return div.firstElementChild;
+  createFragmentFromHTMLString(htmlString) {
+    const template = document.createElement('template');
+    template.innerHTML = htmlString.trim();
+    return template.content;
   }
   refreshLoopWidget(widgetId, filterId) {
     this.loopWidgetsStore.consolidateFilters(widgetId);
@@ -867,9 +863,15 @@ class BaseFilterFrontendModule extends elementorModules.Module {
       if (!response?.data && '' !== response?.data) {
         return;
       }
-      const existingWidgetContainer = widget.querySelector('.elementor-widget-container'),
-        newWidgetContainer = this.createElementFromHTMLString(response.data);
-      widget.replaceChild(newWidgetContainer, existingWidgetContainer);
+      const newWidgetFragment = this.createFragmentFromHTMLString(response.data);
+      const newNodes = Array.from(newWidgetFragment.children);
+      newNodes.forEach(newNode => {
+        const selector = newNode.className ? `.${newNode.className.split(' ').join('.')}` : `#${newNode.id}`;
+        const existingNode = widget.querySelector(selector);
+        if (existingNode) {
+          existingNode.parentNode.replaceChild(newNode, existingNode);
+        }
+      });
       this.handleElementHandlers(widget);
       if (ElementorProFrontendConfig.settings.lazy_load_background_images) {
         document.dispatchEvent(new Event('elementor/lazyload/observe'));
@@ -2671,7 +2673,7 @@ exports["default"] = void 0;
 class _default extends elementorModules.Module {
   constructor() {
     super();
-    elementorFrontend.elementsHandler.attachHandler('table-of-contents', () => Promise.all(/*! import() | table-of-contents */[__webpack_require__.e("vendors-node_modules_dompurify_dist_purify_cjs_js"), __webpack_require__.e("table-of-contents")]).then(__webpack_require__.bind(__webpack_require__, /*! ./handlers/table-of-contents */ "../modules/table-of-contents/assets/js/frontend/handlers/table-of-contents.js")));
+    elementorFrontend.elementsHandler.attachHandler('table-of-contents', () => Promise.all(/*! import() | table-of-contents */[__webpack_require__.e("vendors-node_modules_dompurify_dist_purify_js"), __webpack_require__.e("table-of-contents")]).then(__webpack_require__.bind(__webpack_require__, /*! ./handlers/table-of-contents */ "../modules/table-of-contents/assets/js/frontend/handlers/table-of-contents.js")));
   }
 }
 exports["default"] = _default;

@@ -9,7 +9,6 @@ use ElementorPro\Core\Connect\Apps\Activate;
 use ElementorPro\License\Notices\Trial_Expired_Notice;
 use ElementorPro\License\Notices\Trial_Period_Notice;
 use ElementorPro\Plugin;
-use ElementorPro\License\API as License_API;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -178,16 +177,10 @@ class Admin {
 		}
 
 		if ( ! API::is_license_expired() && API::is_need_to_show_upgrade_promotion() ) {
-			$menu_title = esc_html__( 'Unlock More Features', 'elementor-pro' );
-
-			if ( Pro_Utils::is_sale_time() ) {
-				$menu_title = esc_html__( 'Discounted Upgrades', 'elementor-pro' );
-			}
-
 			add_submenu_page(
 				Settings::PAGE_ID,
 				'',
-				$menu_title,
+				esc_html__( 'Unlock More Features', 'elementor-pro' ),
 				'manage_options',
 				'elementor_pro_upgrade_license_menu_link',
 			);
@@ -242,7 +235,7 @@ class Admin {
 					<h3>
 						<?php $this->render_part_license_status_header( $license_data ); ?>
 						<small>
-							<?php // Force-refresh this page to re-check the license status. ?>
+							<?php // Fake link to make the user think something is going on. In fact, every refresh of this page will re-check the license status. ?>
 							<a class="button" href="<?php echo esc_url( static::get_url() . '&check-license=1' ); ?>">
 								<i class="eicon-sync" aria-hidden="true"></i>
 								<?php echo esc_html__( 'Check license status', 'elementor-pro' ); ?>
@@ -295,14 +288,6 @@ class Admin {
 					</p>
 				<?php endif; ?>
 			</form>
-			<?php if ( License_API::TIER_ESSENENTIAL === License_API::get_access_tier() ) : ?>
-				<p id="tier-upgrade-promotion" class="elementor-license-box e-row-stretch">
-					<span><?php echo esc_html__( 'Get more advanced features', 'elementor-pro' ); ?></span>
-					<a class="button elementor-upgrade-link" target="_blank" href="https://go.elementor.com/go-pro-advanced-license-screen/">
-						<?php echo Pro_Utils::is_sale_time() ? esc_html__( 'Discounted Upgrades', 'elementor-pro' ) : esc_html__( 'Upgrade now', 'elementor-pro' ); ?>
-					</a>
-				</p>
-			<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -445,9 +430,7 @@ class Admin {
 			return;
 		}
 
-		$should_show_renew_license_notice = apply_filters( 'elementor_pro/license/should_show_renew_license_notice', true );
-
-		if ( API::is_license_active() && API::is_license_about_to_expire() && $should_show_renew_license_notice ) {
+		if ( API::is_license_active() && API::is_license_about_to_expire() ) {
 			$title = sprintf(
 				/* translators: %s: Days to expire. */
 				esc_html__( 'Your License Will Expire in %s.', 'elementor-pro' ),
@@ -467,12 +450,6 @@ class Admin {
 				$description = esc_html__( 'Renew your license today, to keep getting feature updates, premium support, Pro widgets & unlimited access to the template library.', 'elementor-pro' );
 			}
 
-			$should_show_renew_license_notice = apply_filters( 'elementor_pro/license/should_show_renew_license_notice', true );
-
-			if ( ! $should_show_renew_license_notice ) {
-				return;
-			}
-
 			$admin_notices->print_admin_notice( [
 				'title' => $title,
 				'description' => $description,
@@ -482,7 +459,7 @@ class Admin {
 					'url' => $renew_url,
 					'type' => 'warning',
 				],
-			]);
+			] );
 		}
 	}
 
@@ -769,12 +746,6 @@ class Admin {
 		add_filter( 'elementor/finder/categories', [ $this, 'add_finder_item' ] );
 		add_filter( 'plugin_action_links_' . ELEMENTOR_PRO_PLUGIN_BASE, [ $this, 'plugin_action_links' ], 50 );
 		add_filter( 'plugin_auto_update_setting_html', [ $this, 'plugin_auto_update_setting_html' ], 10, 2 );
-		add_filter( 'elementor/admin/homescreen_promotion_tier', function ( $tier ) {
-			if ( API::is_license_expired() ) {
-				return API::STATUS_EXPIRED;
-			}
-			return API::get_access_tier();
-		} );
 
 		$this->handle_dashboard_admin_widget();
 	}

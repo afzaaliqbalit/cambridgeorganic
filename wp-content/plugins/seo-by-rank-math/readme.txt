@@ -5,7 +5,7 @@ Tags: seo, WordPress SEO, google search console, schema, redirection,
 Tested up to: 6.8
 Requires at least: 6.3
 Requires PHP: 7.4
-Stable tag: 1.0.253
+Stable tag: 1.0.255
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -339,10 +339,11 @@ Please drop us an email at support@rankmath.com, and we will be more than happy 
 
 == Changelog ==
 
-= 1.0.253 [Sept 10, 2025] =
-- Fixed: Missing option to select [Primary term](https://rankmath.com/kb/how-to-choose-a-primary-category/#how-to-choose-a-primary-category) when [filter to disable Rank Math's Sidebar integration](https://rankmath.com/kb/filters-hooks-api-developer/#disable-gutenberg-sidebar) was used
-- Fixed: [Custom Field variable](https://rankmath.com/kb/variables-in-seo-title-description/#custom-field-advanced) was not working in the [SERP fields](https://rankmath.com/kb/general-tab/#seo-title-permalink-description)
-- Fixed: Duplicate entries were created in the Analytics objects table when updating a post after switching it from Elementor's Top Bar
-- Fixed: Incompatibility with the AffiliateWP plugin when [Remove Base option](https://rankmath.com/kb/general-settings/?#remove-base) was enabled
+= 1.0.255 [Oct 08, 2025] =
+- Added: Option to view and edit SEO Title & Description columns on [Taxonomy Terms lists](https://rankmath.com/kb/titles-and-meta/#bulk-editing-categories) page
+- Fixed: [Keyboard shortcut `//` for opening the Content AI command box](https://rankmath.com/kb/using-content-ai-in-block-editor/#shortcut) was not working
+- Fixed: [Removing the Open Graph Thumbnail from Titles & Meta settings](https://rankmath.com/kb/titles-and-meta/#open-graph-thumbnail) was not working
+- Fixed: PHP warning related to the missing [Phone number type](https://rankmath.com/kb/local-seo/#phone)
+- Fixed: Missing Preview in the [Content AI Prompts library modal](https://rankmath.com/kb/using-content-ai-in-block-editor/#shortcut)
 
 Full changelog can be found here - **[Rank Math changelog](https://rankmath.com/changelog/?utm_source=Plugin&utm_medium=Changelog&utm_campaign=WP)**

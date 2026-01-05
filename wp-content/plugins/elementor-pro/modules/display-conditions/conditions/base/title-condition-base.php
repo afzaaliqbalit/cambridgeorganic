@@ -11,11 +11,10 @@ abstract class Title_Condition_Base extends Condition_Base {
 	abstract protected function get_query();
 
 	public function check( $args ) : bool {
-		$comparator = $args['comparator'];
+		$titles = array_column( $args['titles'], 'text' );
 		$title = get_the_title();
-		$titles = array_map( function ( $id ) {
-			return get_the_title( $id );
-		}, array_column( $args['titles'], 'id' ) );
+		$comparator = $args['comparator'];
+
 		return Comparators_Checker::check_array_contains( $comparator, [ $title ], $titles );
 	}
 

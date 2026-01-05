@@ -56,22 +56,6 @@ class Lottie extends Base_Widget {
 		return [ 'widget-lottie', 'e-lottie' ];
 	}
 
-	protected function current_user_can_use_external_source() {
-		return current_user_can( 'publish_pages' );
-	}
-
-	protected function get_source_options() {
-		$options = [
-			'media_file' => esc_html__( 'Media File', 'elementor-pro' ),
-		];
-
-		if ( $this->current_user_can_use_external_source() ) {
-			$options['external_url'] = esc_html__( 'External URL', 'elementor-pro' );
-		}
-
-		return $options;
-	}
-
 	protected function register_controls() {
 		$this->start_controls_section( 'lottie', [
 			'label' => esc_html__( 'Lottie', 'elementor-pro' ),
@@ -83,7 +67,10 @@ class Lottie extends Base_Widget {
 				'label' => esc_html__( 'Source', 'elementor-pro' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'media_file',
-				'options' => $this->get_source_options(),
+				'options' => [
+					'media_file' => esc_html__( 'Media File', 'elementor-pro' ),
+					'external_url' => esc_html__( 'External URL', 'elementor-pro' ),
+				],
 				'frontend_available' => true,
 			]
 		);
@@ -92,7 +79,7 @@ class Lottie extends Base_Widget {
 			'source_external_url',
 			[
 				'label' => esc_html__( 'External URL', 'elementor-pro' ),
-				'type' => $this->current_user_can_use_external_source() ? Controls_Manager::URL : Controls_Manager::HIDDEN,
+				'type' => Controls_Manager::URL,
 				'condition' => [
 					'source' => 'external_url',
 				],
@@ -874,8 +861,8 @@ class Lottie extends Base_Widget {
 		var widget_caption = getCaption() ? '<p class="e-lottie__caption">' + getCaption() + '</p>' : '';
 		var widget_container = '<div class="e-lottie__container"><div class="e-lottie__animation"></div>' + widget_caption + '</div>';
 
-		if ( settings.custom_link?.url && 'custom' === settings.link_to ) {
-			widget_container = '<a class="e-lottie__container__link" href="' + elementor.helpers.sanitizeUrl( settings.custom_link?.url ) + '">' + widget_container + '</a>';
+		if ( settings.custom_link.url && 'custom' === settings.link_to ) {
+			widget_container = '<a class="e-lottie__container__link" href="' + elementor.helpers.sanitizeUrl( settings.custom_link.url ) + '">' + widget_container + '</a>';
 		}
 
 		print( widget_container );

@@ -1,13 +1,13 @@
-/*! elementor-pro - v3.32.0 - 16-09-2025 */
+/*! elementor-pro - v3.27.0 - 06-02-2025 */
 .elementor-editor-preview .woocommerce-notices-wrapper {
-  padding: 2em 2em 0.3em;
+  padding: 2em 2em 0.3em 2em;
 }
 .elementor-editor-preview .woocommerce-notices-wrapper.elementor-loading {
   opacity: 0.3;
 }
 
 .e-wc-message-notice .woocommerce-message {
-  border: 0 solid #000000;
+  border: 0px solid #000000;
   border-top: 3px solid var(--message-message-icon-color, #95AC3C);
   background-color: #FAFBF5;
   color: var(--message-message-text-color, #3f444b);
@@ -18,13 +18,14 @@
   color: var(--notice-message-normal-links-color, #3f444b);
   text-decoration: underline;
   font-size: 16px;
+  line-height: 24px;
   font-family: Roboto;
   font-weight: 400;
   line-height: 24px;
   text-transform: none;
   text-shadow: none;
   font-style: normal;
-  letter-spacing: 0;
+  letter-spacing: 0px;
 }
 .e-wc-message-notice .woocommerce-message a:not([class]):hover,
 .e-wc-message-notice .woocommerce-message .restore-item:hover {
@@ -46,7 +47,7 @@
   text-transform: none;
   text-shadow: none;
   font-style: normal;
-  letter-spacing: 0;
+  letter-spacing: 0px;
   font-family: Roboto, sans-serif;
 }
 .e-wc-message-notice .woocommerce-message .button:hover {
@@ -64,7 +65,7 @@
   color: var(--info-buttons-normal-text-color, #3F84B9);
 }
 .e-wc-info-notice .woocommerce-info {
-  border: 0 solid #000000;
+  border: 0px solid #000000;
   border-top: 3px solid var(--info-message-icon-color, #3F84B9);
   background-color: #F6F9FB;
   color: var(--info-message-text-color, #3f444b);
@@ -86,7 +87,7 @@
   text-transform: none;
   text-shadow: none;
   font-style: normal;
-  letter-spacing: 0;
+  letter-spacing: 0px;
   font-family: Roboto, sans-serif;
 }
 .e-wc-info-notice .woocommerce-info .button:hover {
@@ -104,7 +105,7 @@
   color: var(--error-message-text-color, #3f444b);
 }
 .e-wc-error-notice .woocommerce-error {
-  border: 0 solid #000000;
+  border: 0px solid #000000;
   border-top: 3px solid var(--error-message-icon-color, #b81c23);
   background-color: #F9F2F5;
   color: var(--error-message-text-color, #3f444b);
@@ -114,13 +115,14 @@
   color: var(--error-message-normal-links-color, #3f444b);
   text-decoration: underline;
   font-size: 16px;
+  line-height: 24px;
   font-family: Roboto;
   font-weight: 400;
   line-height: 1;
   text-transform: none;
   text-shadow: none;
   font-style: normal;
-  letter-spacing: 0;
+  letter-spacing: 0px;
 }
 .e-wc-error-notice .woocommerce-error .wc-backward:hover {
   color: var(--error-message-hover-links-color, #3f444b);
@@ -162,12 +164,20 @@ div.wc-block-components-notice-banner > .wc-block-components-notice-banner__cont
   align-self: center;
   white-space: normal;
   flex-basis: 100%;
-  padding-inline-start: initial;
-  padding-inline-end: var(--wc-blocks-notice-banner-padding);
+  padding-left: initial;
+  padding-right: var(--wc-blocks-notice-banner-padding);
+}
+body.rtl div.wc-block-components-notice-banner > .wc-block-components-notice-banner__content {
+  padding-right: initial;
+  padding-left: var(--wc-blocks-notice-banner-padding);
 }
 div.wc-block-components-notice-banner > .wc-block-components-notice-banner__content:last-child {
-  padding-inline-start: initial;
-  padding-inline-end: 0;
+  padding-left: initial;
+  padding-right: 0;
+}
+body.rtl div.wc-block-components-notice-banner > .wc-block-components-notice-banner__content:last-child {
+  padding-right: initial;
+  padding-left: 0;
 }
 div.wc-block-components-notice-banner > .wc-block-components-notice-banner__content .wc-block-components-notice-banner__summary {
   margin: 0 0 var(--wc-blocks-notice-banner-gap-smaller);
@@ -196,7 +206,10 @@ div.wc-block-components-notice-banner > .wc-block-components-notice-banner__cont
   opacity: 0.6;
   text-decoration-line: underline;
   text-underline-position: under;
-  float: inline-end;
+  float: right;
+}
+body.rtl div.wc-block-components-notice-banner > .wc-block-components-notice-banner__content .wc-forward {
+  float: left;
 }
 div.wc-block-components-notice-banner > .wc-block-components-notice-banner__content .wc-forward:hover, div.wc-block-components-notice-banner > .wc-block-components-notice-banner__content .wc-forward:focus, div.wc-block-components-notice-banner > .wc-block-components-notice-banner__content .wc-forward:active {
   opacity: 1;
