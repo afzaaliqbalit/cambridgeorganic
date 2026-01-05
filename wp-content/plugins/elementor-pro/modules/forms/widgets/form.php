@@ -14,13 +14,13 @@ use ElementorPro\Modules\Forms\Classes\Form_Base;
 use ElementorPro\Modules\Forms\Controls\Fields_Repeater;
 use ElementorPro\Modules\Forms\Module;
 use ElementorPro\Plugin;
-use ElementorPro\Core\Utils\Hints;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Form extends Form_Base {
+
 	public function get_name() {
 		return 'form';
 	}
@@ -507,9 +507,7 @@ class Form extends Form_Base {
 				'label' => esc_html__( 'Form Name', 'elementor-pro' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => esc_html__( 'New Form', 'elementor-pro' ),
-				'dynamic' => [
-					'active' => true,
-				],
+				'placeholder' => esc_html__( 'Form Name', 'elementor-pro' ),
 			]
 		);
 
@@ -822,8 +820,6 @@ class Form extends Form_Base {
 				'label' => esc_html__( 'Actions After Submit', 'elementor-pro' ),
 			]
 		);
-
-		$this->maybe_add_send_app_promotion_control();
 
 		$actions = Module::instance()->actions_registrar->get();
 
@@ -1336,7 +1332,7 @@ class Form extends Form_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '#ffffff',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-field-group .elementor-field:not(.elementor-select-wrapper)' => 'background-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-field-group:not(.elementor-field-type-upload) .elementor-field:not(.elementor-select-wrapper)' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-field-group .elementor-select-wrapper select' => 'background-color: {{VALUE}};',
 				],
 				'separator' => 'before',
@@ -1349,7 +1345,7 @@ class Form extends Form_Base {
 				'label' => esc_html__( 'Border Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-field-group .elementor-field:not(.elementor-select-wrapper)' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-field-group:not(.elementor-field-type-upload) .elementor-field:not(.elementor-select-wrapper)' => 'border-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-field-group .elementor-select-wrapper select' => 'border-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-field-group .elementor-select-wrapper::before' => 'color: {{VALUE}};',
 				],
@@ -1365,7 +1361,7 @@ class Form extends Form_Base {
 				'placeholder' => '1',
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-field-group .elementor-field:not(.elementor-select-wrapper)' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-field-group:not(.elementor-field-type-upload) .elementor-field:not(.elementor-select-wrapper)' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-field-group .elementor-select-wrapper select' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
@@ -1378,7 +1374,7 @@ class Form extends Form_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-field-group .elementor-field:not(.elementor-select-wrapper)' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-field-group:not(.elementor-field-type-upload) .elementor-field:not(.elementor-select-wrapper)' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 					'{{WRAPPER}} .elementor-field-group .elementor-select-wrapper select' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
@@ -2343,7 +2339,6 @@ class Form extends Form_Base {
 
 		if ( ! empty( $instance['form_name'] ) ) {
 			$this->add_render_attribute( 'form', 'name', $instance['form_name'] );
-			$this->add_render_attribute( 'form', 'aria-label', $instance['form_name'] );
 		}
 
 		if ( 'custom' === $instance['form_validation'] ) {
@@ -2486,7 +2481,7 @@ class Form extends Form_Base {
 								</span>
 							<?php endif; ?>
 							<?php if ( ! empty( $instance['button_text'] ) ) : ?>
-								<span <?php $this->print_render_attribute_string( 'button-text' ); ?>><?php echo wp_kses_post( $instance['button_text'] ); ?></span>
+								<span <?php $this->print_render_attribute_string( 'button-text' ); ?>><?php $this->print_unescaped_setting( 'button_text' ); ?></span>
 							<?php endif; ?>
 						</span>
 					</button>
@@ -2747,7 +2742,7 @@ class Form extends Form_Base {
 								<# } #>
 
 								<# if ( settings.button_text ) { #>
-									<span {{{ view.getRenderAttributeString( 'button-text' ) }}}>{{ settings.button_text }}</span>
+									<span {{{ view.getRenderAttributeString( 'button-text' ) }}}>{{{ settings.button_text }}}</span>
 								<# } #>
 							</span>
 						</button>
@@ -2759,37 +2754,5 @@ class Form extends Form_Base {
 
 	public function get_group_name() {
 		return 'forms';
-	}
-
-	private function maybe_add_send_app_promotion_control(): void {
-		if ( Hints::is_plugin_installed( 'send-app' ) ) {
-			return;
-		}
-
-		$notice_id = 'send_app_forms_actions_notice';
-		if ( ! Hints::should_show_hint( $notice_id ) ) {
-			return;
-		}
-
-		$notice_content = wp_kses( __( 'Turning leads into sales can be easy.<br />Let Send do the work', 'elementor-pro' ), [ 'br' => [] ] );
-
-		$this->add_control(
-			'send_app_promo',
-			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => Hints::get_notice_template( [
-					'display' => ! Hints::is_dismissed( $notice_id ),
-					'type' => 'info',
-					'content' => $notice_content,
-					'icon' => true,
-					'dismissible' => $notice_id,
-					'button_text' => __( 'Start for free', 'elementor-pro' ),
-					'button_event' => $notice_id,
-					'button_data' => [
-						'action_url' => Hints::get_plugin_action_url( 'send-app' ),
-					],
-				], true ),
-			]
-		);
 	}
 }

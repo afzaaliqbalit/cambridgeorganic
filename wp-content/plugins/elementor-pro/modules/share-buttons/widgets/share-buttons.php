@@ -161,9 +161,9 @@ class Share_Buttons extends Base_Widget {
 				'label' => esc_html__( 'View', 'elementor-pro' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'icon-text' => esc_html__( 'Icon & Text', 'elementor-pro' ),
-					'icon' => esc_html__( 'Icon', 'elementor-pro' ),
-					'text' => esc_html__( 'Text', 'elementor-pro' ),
+					'icon-text' => 'Icon & Text',
+					'icon' => 'Icon',
+					'text' => 'Text',
 				],
 				'default' => 'icon-text',
 				'separator' => 'before',
@@ -225,13 +225,13 @@ class Share_Buttons extends Base_Widget {
 				'type' => Controls_Manager::SELECT,
 				'default' => '0',
 				'options' => [
-					'0' => esc_html__( 'Auto', 'elementor-pro' ),
-					'1' => esc_html__( '1', 'elementor-pro' ),
-					'2' => esc_html__( '2', 'elementor-pro' ),
-					'3' => esc_html__( '3', 'elementor-pro' ),
-					'4' => esc_html__( '4', 'elementor-pro' ),
-					'5' => esc_html__( '5', 'elementor-pro' ),
-					'6' => esc_html__( '6', 'elementor-pro' ),
+					'0' => 'Auto',
+					'1' => '1',
+					'2' => '2',
+					'3' => '3',
+					'4' => '4',
+					'5' => '5',
+					'6' => '6',
 				],
 				'prefix_class' => 'elementor-grid%s-',
 			]
@@ -260,9 +260,16 @@ class Share_Buttons extends Base_Widget {
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
+				/* TODO: `prefix_class` is redundant since v3.1.0
+				 * It is only here for backwards compatibility reasons.
+				 * It should be removed in the future.
+				 */
+				'prefix_class' => 'elementor-share-buttons%s--align-',
+				/*---------------------------------------------------*/
 				'condition' => [
 					'columns' => '0',
 				],
+				/* `selectors` was added on v3.1.0 as a superior alternative to the previous `prefix_class` solution */
 				'selectors' => [
 					'{{WRAPPER}}' => '--alignment: {{VALUE}}',
 				],
@@ -588,21 +595,15 @@ class Share_Buttons extends Base_Widget {
 			return;
 		}
 
-		$this->add_render_attribute( 'wrapper', 'class', 'elementor-grid' );
-		$this->add_render_attribute( 'item_wrapper', 'class', 'elementor-grid-item' );
-
-		if ( count( $settings['share_buttons'] ) > 1 ) {
-			$this->add_render_attribute( 'wrapper', 'role', 'list' );
-			$this->add_render_attribute( 'item_wrapper', 'role', 'listitem' );
-		}
+		$button_classes = 'elementor-share-btn';
 
 		$show_text = 'text' === $settings['view'] || 'yes' === $settings['show_label'];
 		?>
-		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
+		<div class="elementor-grid">
 			<?php
 			$networks_data = Module::get_networks();
 
-			foreach ( $settings['share_buttons'] as $index => $button ) {
+			foreach ( $settings['share_buttons'] as $button ) {
 				$network_name = $button['button'];
 
 				// A deprecated network.
@@ -610,18 +611,15 @@ class Share_Buttons extends Base_Widget {
 					continue;
 				}
 
-				$this->add_render_attribute(
-					'item_link_' . $index,
-					[
-						'class' => [ 'elementor-share-btn', 'elementor-share-btn_' . $network_name ],
-						'role' => 'button',
-						'tabindex' => '0',
-						'aria-label' => sprintf( esc_attr__( 'Share on %s', 'elementor-pro' ), esc_attr( $network_name ) ),
-					]
-				);
+				$social_network_class = ' elementor-share-btn_' . $network_name;
 				?>
-					<div <?php $this->print_render_attribute_string( 'item_wrapper' ); ?>>
-						<div <?php $this->print_render_attribute_string( 'item_link_' . $index ); ?>>
+					<div class="elementor-grid-item">
+						<div
+							class="<?php echo esc_attr( $button_classes . $social_network_class ); ?>"
+							role="button"
+							tabindex="0"
+							aria-label="<?php echo sprintf( esc_attr__( 'Share on %s', 'elementor-pro' ), esc_attr( $network_name ) ); ?>"
+						>
 							<?php if ( 'icon' === $settings['view'] || 'icon-text' === $settings['view'] ) : ?>
 								<span class="elementor-share-btn__icon">
 								<?php self::render_share_icon( $network_name ); ?>
@@ -659,40 +657,24 @@ class Share_Buttons extends Base_Widget {
 	protected function content_template() {
 		?>
 		<#
-			view.addRenderAttribute( 'wrapper', 'class', 'elementor-grid' );
-			view.addRenderAttribute( 'item_wrapper', 'class', 'elementor-grid-item' );
-
-			if ( settings.share_buttons.length > 1 ) {
-				view.addRenderAttribute( 'wrapper', 'role', 'list' );
-				view.addRenderAttribute( 'item_wrapper', 'role', 'listitem' );
-			}
-
-			var shareButtonsEditorModule = elementorPro.modules.shareButtons;
+			var shareButtonsEditorModule = elementorPro.modules.shareButtons,
+				buttonClass = 'elementor-share-btn';
 
 			var showText = 'icon-text' === settings.view ? 'yes' === settings.show_label : 'text' === settings.view;
 		#>
-		<div {{{ view.getRenderAttributeString( 'wrapper' ) }}}>
+		<div class="elementor-grid">
 			<#
-				_.each( settings.share_buttons, function( button, index ) {
+				_.each( settings.share_buttons, function( button ) {
 					// A deprecated network.
 					if ( ! shareButtonsEditorModule.getNetworkData( button ) ) {
 						return;
 					}
 
-					var networkName = button.button;
-
-					view.addRenderAttribute(
-						'item_link_' + index,
-						{
-							'class': [ 'elementor-share-btn', 'elementor-share-btn_' + networkName ],
-							'role': 'button',
-							'tabindex': '0',
-							'aria-label': 'Share on ' + networkName,
-						}
-					);
+					var networkName = button.button,
+						socialNetworkClass = 'elementor-share-btn_' + networkName;
 					#>
-					<div {{{ view.getRenderAttributeString( 'item_wrapper' ) }}}>
-						<div  {{{ view.getRenderAttributeString( 'item_link_' + index ) }}}>
+					<div class="elementor-grid-item">
+						<div class="{{ buttonClass }} {{ socialNetworkClass }}" role="button" tabindex="0" aria-label="Share on {{{ networkName }}}">
 							<# if ( 'icon' === settings.view || 'icon-text' === settings.view ) { #>
 							<span class="elementor-share-btn__icon">
 								<i class="{{ shareButtonsEditorModule.getNetworkClass( networkName ) }}" aria-hidden="true"></i>
@@ -716,7 +698,7 @@ class Share_Buttons extends Base_Widget {
 		$network_icon_data = self::get_network_icon_data( $network_name );
 
 		if ( Plugin::elementor()->experiments->is_feature_active( 'e_font_icon_svg' ) ) {
-			$icon = Icons_Manager::render_font_icon( $network_icon_data, [ 'aria-hidden' => 'true' ] );
+			$icon = Icons_Manager::render_font_icon( $network_icon_data );
 		} else {
 			$icon = sprintf( '<i class="%s" aria-hidden="true"></i>', esc_attr( $network_icon_data['value'] ) );
 		}

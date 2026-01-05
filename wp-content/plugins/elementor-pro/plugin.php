@@ -1,7 +1,6 @@
 <?php
 namespace ElementorPro;
 
-use ElementorPro\Core\Maintenance;
 use ElementorPro\Core\PHP_Api;
 use ElementorPro\Core\Admin\Admin;
 use ElementorPro\Core\App\App;
@@ -16,6 +15,8 @@ use ElementorPro\Core\Preview\Preview;
 use ElementorPro\Core\Upgrade\Manager as UpgradeManager;
 use ElementorPro\License\API;
 use ElementorPro\License\Updater;
+use ElementorPro\Core\Container\Container;
+use ElementorProDeps\DI\Container as DIContainer;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -94,6 +95,14 @@ class Plugin {
 	public $php_api;
 
 	/**
+	 * Container instance for managing dependencies.
+	 *
+	 * @since 3.25.0
+	 * @var DIContainer
+	 */
+	private static $container;
+
+	/**
 	 * Throw error on object clone
 	 *
 	 * The whole idea of the singleton design pattern is that there is a single
@@ -134,13 +143,26 @@ class Plugin {
 
 	/**
 	 * @return Plugin
+	 * @throws Exception
 	 */
 	public static function instance(): Plugin {
 		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
+			self::$container = Container::get_instance();
 		}
 
 		return self::$_instance;
+	}
+
+	/**
+	 * Get the Elementor Pro container or resolve a dependency.
+	 */
+	public function get_elementor_pro_container( $abstract = null ): DIContainer {
+		if ( is_null( $abstract ) ) {
+			return self::$container;
+		}
+
+		return self::$container->make( $abstract );
 	}
 
 	public function autoload( $class ) {
@@ -271,8 +293,33 @@ class Plugin {
 		);
 	}
 
-	public function register_frontend_scripts() {
+	public function register_frontend_styles() {
 		$suffix = $this->get_assets_suffix();
+
+		wp_register_style(
+			'e-motion-fx',
+			ELEMENTOR_PRO_URL . 'assets/css/modules/motion-fx' . $suffix . '.css',
+			[],
+			ELEMENTOR_PRO_VERSION
+		);
+
+		wp_register_style(
+			'e-sticky',
+			ELEMENTOR_PRO_URL . 'assets/css/modules/sticky' . $suffix . '.css',
+			[],
+			ELEMENTOR_PRO_VERSION
+		);
+
+		wp_register_style(
+			'e-popup',
+			ELEMENTOR_PRO_URL . 'assets/css/conditionals/popup' . $suffix . '.css',
+			[],
+			ELEMENTOR_PRO_VERSION
+		);
+	}
+
+	public function register_frontend_scripts() {
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_register_script(
 			'elementor-pro-webpack-runtime',
@@ -320,7 +367,7 @@ class Plugin {
 	}
 
 	public function register_preview_scripts() {
-		$suffix = $this->get_assets_suffix();
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_enqueue_script(
 			'elementor-pro-preview',
@@ -332,6 +379,12 @@ class Plugin {
 			ELEMENTOR_PRO_VERSION,
 			true
 		);
+	}
+
+	public function enqueue_preview_styles() {
+		wp_enqueue_style( 'e-motion-fx' );
+		wp_enqueue_style( 'e-sticky' );
+		wp_enqueue_style( 'e-popup' );
 	}
 
 	public function get_responsive_stylesheet_templates( $templates ) {
@@ -400,16 +453,14 @@ class Plugin {
 			$settings['library_connect']['current_access_tier'] = API::get_access_tier();
 		}
 
-		// Core >= 3.32.0
-		if ( isset( $settings['library_connect']['plan_type'] ) ) {
-			$settings['library_connect']['plan_type'] = API::get_plan_type();
-		}
-
 		return $settings;
 	}
 
 	private function setup_hooks() {
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ] );
+
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_frontend_styles' ] );
+		add_action( 'elementor/preview/enqueue_styles', [ $this, 'enqueue_preview_styles' ] );
 
 		add_action( 'elementor/frontend/before_register_scripts', [ $this, 'register_frontend_scripts' ] );
 		add_action( 'elementor/preview/enqueue_scripts', [ $this, 'register_preview_scripts' ] );
@@ -491,15 +542,13 @@ class Plugin {
 			$this->license_admin->register_actions();
 		}
 
-		Maintenance::init();
-
 		// The `Updater` class is responsible for adding some updates related filters, including auto updates, and since
 		// WP crons don't run on admin mode, it should not depend on it.
 		$this->updater = new Updater();
 	}
 
 	private function get_assets_suffix() {
-		return Utils::is_script_debug() ? '' : '.min';
+		return defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 	}
 
 	private static function get_frontend_file( $frontend_file_name ) {

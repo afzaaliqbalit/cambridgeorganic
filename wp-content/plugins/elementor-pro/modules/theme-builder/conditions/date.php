@@ -20,7 +20,7 @@ class Date extends Condition_Base {
 	}
 
 	public function get_label() {
-		return esc_html__( 'Date archive', 'elementor-pro' );
+		return esc_html__( 'Date Archive', 'elementor-pro' );
 	}
 
 	public function check( $args ) {

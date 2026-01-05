@@ -13,8 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Widget extends Library_Document {
 
-	const EXPORT_GROUP = 'global-widget';
-
 	public static function get_properties() {
 		$properties = parent::get_properties();
 

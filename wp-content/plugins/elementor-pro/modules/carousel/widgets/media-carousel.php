@@ -302,7 +302,7 @@ class Media_Carousel extends Base {
 		return $slide['image']['url'];
 	}
 
-	protected function print_slider( ?array $settings = null ) {
+	protected function print_slider( array $settings = null ) {
 		$this->lightbox_slide_index = 0;
 
 		parent::print_slider( $settings );
@@ -508,7 +508,7 @@ class Media_Carousel extends Base {
 				'selector' => '{{WRAPPER}} .elementor-custom-embed-play i',
 				'fields_options' => [
 					'text_shadow_type' => [
-						'label' => esc_html__( 'Shadow', 'elementor-pro' ),
+						'label' => _x( 'Shadow', 'Text Shadow Control', 'elementor-pro' ),
 					],
 				],
 			]

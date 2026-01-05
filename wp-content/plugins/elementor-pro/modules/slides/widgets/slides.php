@@ -2,7 +2,6 @@
 namespace ElementorPro\Modules\Slides\Widgets;
 
 use Elementor\Controls_Manager;
-use Elementor\Control_Media;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Text_Shadow;
@@ -115,13 +114,10 @@ class Slides extends Base_Widget {
 		$repeater->add_control(
 			'background_image',
 			[
-				'label' => esc_html__( 'Image', 'elementor-pro' ),
+				'label' => _x( 'Image', 'Background Control', 'elementor-pro' ),
 				'type' => Controls_Manager::MEDIA,
 				'selectors' => [
 					'{{WRAPPER}} {{CURRENT_ITEM}} .swiper-slide-bg' => 'background-image: url({{URL}})',
-				],
-				'default' => [
-					'url' => '',
 				],
 			]
 		);
@@ -129,13 +125,13 @@ class Slides extends Base_Widget {
 		$repeater->add_control(
 			'background_size',
 			[
-				'label' => esc_html__( 'Size', 'elementor-pro' ),
+				'label' => _x( 'Size', 'Background Control', 'elementor-pro' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'cover',
 				'options' => [
-					'cover' => esc_html__( 'Cover', 'elementor-pro' ),
-					'contain' => esc_html__( 'Contain', 'elementor-pro' ),
-					'auto' => esc_html__( 'Auto', 'elementor-pro' ),
+					'cover' => _x( 'Cover', 'Background Control', 'elementor-pro' ),
+					'contain' => _x( 'Contain', 'Background Control', 'elementor-pro' ),
+					'auto' => _x( 'Auto', 'Background Control', 'elementor-pro' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}} {{CURRENT_ITEM}} .swiper-slide-bg' => 'background-size: {{VALUE}}',
@@ -524,27 +520,18 @@ class Slides extends Base_Widget {
 						'description' => esc_html__( 'Lorem ipsum dolor sit amet consectetur adipiscing elit dolor', 'elementor-pro' ),
 						'button_text' => esc_html__( 'Click Here', 'elementor-pro' ),
 						'background_color' => '#833ca3',
-						'background_image' => [
-							'url' => '',
-						],
 					],
 					[
 						'heading' => esc_html__( 'Slide 2 Heading', 'elementor-pro' ),
 						'description' => esc_html__( 'Lorem ipsum dolor sit amet consectetur adipiscing elit dolor', 'elementor-pro' ),
 						'button_text' => esc_html__( 'Click Here', 'elementor-pro' ),
 						'background_color' => '#4054b2',
-						'background_image' => [
-							'url' => '',
-						],
 					],
 					[
 						'heading' => esc_html__( 'Slide 3 Heading', 'elementor-pro' ),
 						'description' => esc_html__( 'Lorem ipsum dolor sit amet consectetur adipiscing elit dolor', 'elementor-pro' ),
 						'button_text' => esc_html__( 'Click Here', 'elementor-pro' ),
 						'background_color' => '#1abc9c',
-						'background_image' => [
-							'url' => '',
-						],
 					],
 				],
 				'title_field' => '{{{ heading }}}',
@@ -1319,6 +1306,9 @@ class Slides extends Base_Widget {
 			]
 		);
 
+		// TODO: Remove conditional logic in v3.28 [ED-15983].
+		$swiper_class = $this->is_swiper_upgrade_experiment_state_inactive() ? 'swiper-container' : 'swiper';
+
 		$this->add_responsive_control(
 			'dots_size',
 			[
@@ -1338,7 +1328,7 @@ class Slides extends Base_Widget {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .swiper-pagination-bullet' => 'height: {{SIZE}}{{UNIT}}; width: {{SIZE}}{{UNIT}}',
-					'{{WRAPPER}} .swiper-horizontal .swiper-pagination-progressbar' => 'height: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .' . $swiper_class . '-horizontal .swiper-pagination-progressbar' => 'height: {{SIZE}}{{UNIT}}',
 					'{{WRAPPER}} .swiper-pagination-fraction' => 'font-size: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [
@@ -1386,12 +1376,15 @@ class Slides extends Base_Widget {
 			return;
 		}
 
+		// TODO: Remove conditional logic in v3.28 [ED-15983].
+		$swiper_class = $this->is_swiper_upgrade_experiment_state_inactive() ? 'swiper-container' : 'swiper';
+
 		$optimized_markup = Plugin::elementor()->experiments->is_feature_active( 'e_optimized_markup' );
 		$direction = is_rtl() ? 'rtl' : 'ltr';
 
 		$this->add_render_attribute( [
 			'wrapper' => [
-				'class' => [ 'elementor-slides-wrapper', 'elementor-main-swiper', 'swiper' ],
+				'class' => [ 'elementor-slides-wrapper', 'elementor-main-swiper', $swiper_class ],
 				'role' => 'region',
 				'aria-roledescription' => 'carousel',
 				'aria-label' => $settings['slides_name'],
@@ -1412,7 +1405,7 @@ class Slides extends Base_Widget {
 		$slides = [];
 		$slide_count = 0;
 
-		foreach ( $settings['slides'] as $slide_index => $slide ) {
+		foreach ( $settings['slides'] as $slide ) {
 			$slide_html = '';
 			$btn_attributes = '';
 			$slide_attributes = '';
@@ -1429,17 +1422,6 @@ class Slides extends Base_Widget {
 					$slide_element = 'a';
 					$slide_attributes = $this->get_render_attribute_string( 'slide_link' . $slide_count );
 				}
-			}
-
-			$this->add_render_attribute( 'slide_bg_' . $slide_index, 'class', 'swiper-slide-bg' );
-
-			if ( $slide['background_ken_burns'] ) {
-				$this->add_render_attribute( 'slide_bg_' . $slide_index, 'class', [ 'elementor-ken-burns', 'elementor-ken-burns--' . $slide['zoom_direction'] ] );
-			}
-
-			if ( ! empty( $slide['background_image']['id'] ) ) {
-				$this->add_render_attribute( 'slide_bg_' . $slide_index, 'role', 'img' );
-				$this->add_render_attribute( 'slide_bg_' . $slide_index, 'aria-label', Control_Media::get_image_alt( $slide['background_image'] ) );
 			}
 
 			$slide_html .= '<' . $slide_element . ' class="swiper-slide-inner" ' . $slide_attributes . '>';
@@ -1464,7 +1446,13 @@ class Slides extends Base_Widget {
 				$slide_html = '<div class="elementor-background-overlay"></div>' . $slide_html;
 			}
 
-			$slide_html = '<div ' . $this->get_render_attribute_string( 'slide_bg_' . $slide_index ) . '></div>' . $slide_html;
+			$ken_class = '';
+
+			if ( $slide['background_ken_burns'] ) {
+				$ken_class = ' elementor-ken-burns elementor-ken-burns--' . $slide['zoom_direction'];
+			}
+
+			$slide_html = '<div class="swiper-slide-bg' . esc_attr( $ken_class ) . '" role="img"></div>' . $slide_html;
 
 			$slides[] = '<div class="elementor-repeater-item-' . esc_attr( $slide['_id'] ) . ' swiper-slide" role="group" aria-roledescription="slide">' . $slide_html . '</div>';
 			$slide_count++;
@@ -1542,22 +1530,16 @@ class Slides extends Base_Widget {
 		<# } #>
 			<div {{{ view.getRenderAttributeString( 'wrapper' ) }}}>
 				<div class="swiper-wrapper elementor-slides">
-					<#
-					jQuery.each( settings.slides, function( index, slide ) {
-
-						view.addRenderAttribute( 'slide_bg_' + index, 'class', 'swiper-slide-bg' );
-
-						if ( '' != slide.background_ken_burns ) {
-							view.addRenderAttribute( 'slide_bg_' + index, 'class', [ 'elementor-ken-burns', 'elementor-ken-burns--' + _.escape( slide.zoom_direction ) ] );
-						}
-
-						if ( slide.background_image.id ) {
-							view.addRenderAttribute( 'slide_bg_' + index, 'role', 'img' );
-							view.addRenderAttribute( 'slide_bg_' + index, 'aria-label', slide.background_image.alt || '' );
-						}
-						#>
+					<# jQuery.each( settings.slides, function( index, slide ) { #>
 						<div class="elementor-repeater-item-{{ _.escape( slide._id ) }} swiper-slide" role="group" aria-roledescription="slide">
-							<div {{{ view.getRenderAttributeString( 'slide_bg_' + index ) }}}></div>
+							<#
+							var kenClass = '';
+
+							if ( '' != slide.background_ken_burns ) {
+								kenClass = ' elementor-ken-burns elementor-ken-burns--' + _.escape( slide.zoom_direction );
+							}
+							#>
+							<div class="swiper-slide-bg{{ kenClass }}" role="img"></div>
 							<# if ( 'yes' === slide.background_overlay ) { #>
 							<div class="elementor-background-overlay"></div>
 							<# } #>
