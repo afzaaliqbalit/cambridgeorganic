@@ -6,11 +6,11 @@
 wordpress/
 wp-admin/
 wp-includes/
+notes/
 
 # Ignore all files in root except wp-content, config sample & custom files
 /*
 !.gitignore
-!wp-content/
 !wp-config-sample.php
 !README.md
 !readme.txt
@@ -23,8 +23,6 @@ wp-includes/
 # Ignore everything in wp-content except themes, plugins, mu-plugins
 wp-content/*
 !wp-content/themes/
-!wp-content/plugins/
-!wp-content/mu-plugins/
 !wp-content/uploads/.gitkeep
 
 # ======================================================
@@ -38,6 +36,7 @@ wp-content/languages/
 wp-content/ai1wm-backups/
 wp-content/wp-rocket-config/
 wp-content/et-cache/
+wp-content/plugins/
 
 # ======================================================
 # Environment & config files
