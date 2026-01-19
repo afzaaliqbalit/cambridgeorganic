@@ -283,4 +283,28 @@ form.postcode-search .form-group {
   padding: 10px 38px 10px;
 }
 
+.wpsf-form-wrap.wpsf-template-1 {
+  padding: 0 !important;
+}
+
+.wpsf-subscription_form {
+  background-color: transparent !important;
+}
+.wpsf-subscription_form .wpsf-email[class] {
+  border: 1px solid #cccccc !important;
+  padding: 12px 18px;
+  background-color: #fff !important;
+}
+.wpsf-subscription_form .wpsf-email[class]::placeholder {
+  color: var(--e-global-color-accent);
+}
+.wpsf-subscription_form .wpsf-form-submit[class] {
+  background-color: var(--e-global-color-accent) !important;
+  color: #fff;
+  text-align: center;
+  padding: 6px 2em;
+  border-radius: 32px;
+  line-height: normal;
+}
+
 /*# sourceMappingURL=style.css.map */
