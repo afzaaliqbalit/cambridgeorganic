@@ -6,31 +6,15 @@
 wordpress/
 wp-admin/
 wp-includes/
-
-# Ignore all files in root except wp-content, config sample & custom files
-/*
-!.gitignore
-!wp-content/
-!wp-config-sample.php
-!README.md
-!readme.txt
-!index.php
+notes/
 
 # ======================================================
 # wp-content
 # ======================================================
 
-# Ignore everything in wp-content except themes, plugins, mu-plugins
-wp-content/*
-!wp-content/themes/
-!wp-content/plugins/
-!wp-content/mu-plugins/
-!wp-content/uploads/.gitkeep
-
 # ======================================================
 # Uploads & cache (large files)
 # ======================================================
-wp-content/uploads/
 wp-content/cache/
 wp-content/backups/
 wp-content/upgrade/
@@ -38,6 +22,8 @@ wp-content/languages/
 wp-content/ai1wm-backups/
 wp-content/wp-rocket-config/
 wp-content/et-cache/
+wp-content/plugins/
+wp-content/updraft/
 
 # ======================================================
 # Environment & config files
