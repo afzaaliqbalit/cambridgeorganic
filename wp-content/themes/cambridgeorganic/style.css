@@ -295,6 +295,9 @@ form.postcode-search .form-group {
   padding: 12px 18px;
   background-color: #fff !important;
 }
+.wpsf-subscription_form .wpsf-email[class]::-moz-placeholder {
+  color: var(--e-global-color-accent);
+}
 .wpsf-subscription_form .wpsf-email[class]::placeholder {
   color: var(--e-global-color-accent);
 }
@@ -307,4 +310,7 @@ form.postcode-search .form-group {
   line-height: normal;
 }
 
-/*# sourceMappingURL=style.css.map */
+.active_section {
+  background-color: #f1f1f1;
+  border: 1px solid;
+}/*# sourceMappingURL=style.css.map */
