@@ -6,7 +6,9 @@
 */
 
 :root {
-    --orange: #e77538
+    --orange: #e77538;
+    --container-width: 1400px;
+    --red: #c41230;
 }
 
 .header-container {
@@ -20,7 +22,10 @@
     left: 0;
     margin-top: 30px;
 }
-
+.page-content,.single-product #main {
+    margin: auto;
+    max-width: var(--container-width);
+}
 .header-container .menu-item .sub-menu .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -37,11 +42,14 @@
     text-align: center;
     padding: 6px 2em;
     border-radius: 32px;
-}
-
-.button:hover {
-    background-color: var(--e-global-color-004fee8);
-    color: #fff;
+    &:hover {
+        background-color: var(--e-global-color-004fee8);
+        color: #fff;
+    }
+    &.btn-large {
+        padding: 12px 24px;
+        min-width: max-content;
+    }
 }
 
 .btn:has(.elementor-button) .elementor-button {
@@ -77,60 +85,7 @@
     background-color: #fff;
 }
 
-.primary-menu {
-    display: flex;
-    justify-content: center;
-    gap: 1em;
-}
 
-.primary-menu .menu-item > .button {
-    position: relative;
-    padding: 8px 2.2em;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    --arrow-color: var(--e-global-color-accent);
-}
-
-.primary-menu .menu-item > .button.has-children:before {
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 6px solid var(--arrow-color);
-    content: '';
-    position: absolute;
-    right: 14px;
-    top: 54%;
-    transform: translateY(-50%);
-}
-
-.primary-menu .menu-item > .button.has-children {
-    padding-right: 44px;
-}
-
-.primary-menu .menu-item > .button:not(.active) {
-    color: var(--e-global-color-accent);
-    background-color: #fff;
-}
-.primary-menu .menu-item > .button:not(.active):hover {
-    background-color: var(--e-global-color-33c9d76);
-}
-
-.primary-menu .menu-item > .button.active {
-    font-weight: 500;
-    --arrow-color: #fff;
-}
-
-.primary-menu .menu-item > .button.active:after {
-    height: calc(100% - 3px);
-    width: 2px;
-    background-color: var(--e-global-color-accent);
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    content: "";
-    top: 100%;
-}
 
 .header-container .e-search-input-wrapper {
 
@@ -181,24 +136,6 @@ form {
     }
 }
 
-.icon-people {
-    background-image: url("../../uploads/2026/01/icon-people.svg");
-    width: 30px;
-    height: 22px;
-    display: inline-block;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.icon-vegebox {
-    background-image: url("../../uploads/2026/01/icon-vegebox.svg");
-    width: 34px;
-    height: 18px;
-    display: inline-block;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
 form.postcode-search {
     display: flex;
     flex-direction: column;
@@ -212,84 +149,7 @@ form.postcode-search {
     }
 }
 
-.product-boxes {
-    display: flex;
-    gap: 15px;
-    > div {
-        width: 100%;
-    }
-}
-.product-box {
-    background-color: #e6e8e7;
-    .thumbnail {
-        padding: 0;
-        margin: 0;
-        img {
-            display: block;
-            width: 100%;
-        }
-    }
-    .box-data {
-        padding: 22px;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        .prod-name {
-            font-size: 24px;
-            text-align: center;
-            font-weight: 500;
-            span {
-                font-weight: 700;
-            }
-        }
-        .box-meta {
-            display: flex;
-            background-color: #fff;
-            padding: 8px 0;
-            > div {
-                flex: 1;
-                padding: 6px 18px;
-                font-weight: 600;
-                display: flex;
-                align-items: center;
-                gap: 0 15px;
-                font-size: 15px;
-                &:first-child {
-                    border-right: 1px solid #ccc;
-                }
-            }
-            .icon-people {
-                width: 26px;
-                height: 18px;
-            }
-            .icon-vegebox {
-                width: 32px;
-                height: 18px;
-            }
-        }
-        .box-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 20px;
-            h4, h5 {
-                margin-bottom: 0;
-                padding-bottom: 0;
-                margin-top: 0;
-            }
-            h5 {
-                font-size: 18px;
-            }
-            .prod-price {
-                font-weight: 700;
-                font-size: 32px;
-            }
-            .btn {
-                padding: 10px 38px 10px;
-            }
-        }
-    }
-}
+
 
 .wpsf-form-wrap.wpsf-template-1 {
     padding: 0 !important;

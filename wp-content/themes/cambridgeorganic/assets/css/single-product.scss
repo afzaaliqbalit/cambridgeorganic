@@ -1,0 +1,84 @@
+.single-product-wrap {
+  padding-top: 2em;
+  > .row {
+    --bs-gutter-x: 3.5rem;
+  }
+  .product-image {
+    img {
+      width: 100%;
+    }
+  }
+  .product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+  }
+  .product-title {
+    display: flex;
+    align-items: end;
+    gap: 1em;
+    h2 {
+      font-size: 34px;
+      font-weight: 600;
+    }
+    > span {
+      font-size: 18px;
+      font-weight: 500;
+    }
+  }
+  .tag-wrap {
+    display: inline-flex;
+    gap: 26px;
+    border: 1px solid var(--light-gray);
+    padding: 4px 18px 5px;
+    font-size: 15px;
+    align-items: center;
+    position: relative;
+    > span {
+      display: flex;
+      place-content: center;
+      position: relative;
+    }
+    >span:not(:last-child):after {
+      width: 1px;
+      height: 100%;
+      background-color: #eee;
+      content: "";
+      position: absolute;
+      right: -14px;
+      top: 0;
+    }
+    .icon-info {
+      width: 16px;
+      height: 24px;
+      margin-right: 6px;
+    }
+  }
+  .price-info {
+    display: flex;
+    gap: 1em;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    .product-price {
+      margin: 0;
+      font-weight: 700;
+      font-size: 34px;
+    }
+    .selection {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      justify-content: center;
+      label {
+        min-width: 85px;
+      }
+      select {
+        width: 100%;
+      }
+    }
+  }
+}
+
+@import "stepper";
+@import "accordion";

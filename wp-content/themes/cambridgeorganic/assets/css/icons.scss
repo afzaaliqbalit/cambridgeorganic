@@ -1,0 +1,136 @@
+.icon-eu {
+  width: 26px;
+  height: 24px;
+  background-image: url("../images/flag-eu.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+}
+.icon-info {
+  width: 26px;
+  height: 24px;
+  background-image: url("../images/exclamation.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+}
+
+.icon-basket {
+  width: 52px;
+  height: 42px;
+  display: inline-block;
+  background-position: center;
+  background-color: var(--accent-red);
+  mask-image: url(../images/icon-cart.svg);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  &.white {
+    background-color: #fff;
+  }
+}
+
+.icon-check-circle-fill {
+  width: 22px;
+  height: 22px;
+  display: inline-block;
+  mask-image: url(../images/icon-check-circle-fill.svg);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-color: var(--primary-green);
+}
+
+.icon-people {
+  background-color: var(--primary-green);
+  mask-image: url("../images/icon-people.svg");
+  width: 30px;
+  height: 22px;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-position: center;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.icon-user {
+  width: 22px;
+  height: 22px;
+  display: inline-block;
+  mask-image: url(../images/icon-user.svg);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-color: var(--red);
+}
+
+.icon-vegebox {
+  background-color: var(--primary-green);
+  mask-image: url("../images/icon-vegebox.svg");
+  width: 28px;
+  height: 18px;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-position: center;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.icon-truck {
+  background-color: var(--primary-green);
+  mask-image: url("../images/icon-truck.svg");
+  width: 34px;
+  height: 18px;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-position: center;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.icon-calender {
+  background-color: var(--primary-green);
+  mask-image: url("../images/icon-calender.svg");
+  width: 34px;
+  height: 18px;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-position: center;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.icon-currency {
+  background-color: var(--primary-green);
+  mask-image: url("../images/icon-currency.svg");
+  width: 34px;
+  height: 18px;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-position: center;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.icon-message {
+  background-color: var(--primary-green);
+  mask-image: url("../images/icon-message.svg");
+  width: 34px;
+  height: 18px;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-position: center;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.icon-map-marker-circled {
+  background-color: var(--darkred);
+  mask-image: url("../images/map-markercircled.svg");
+  width: 80px;
+  height: 80px;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-position: center;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}

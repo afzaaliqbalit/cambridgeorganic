@@ -1,0 +1,6 @@
+@media (min-width: 1600px) {
+  .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+    --container: 1420px !important;
+    max-width: var(--container);
+  }
+}

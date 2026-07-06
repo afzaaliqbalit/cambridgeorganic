@@ -1,0 +1,57 @@
+.single-product-wrap > .row {
+  --bs-gutter-x: 3.5rem;
+}
+.single-product-wrap .product-image img {
+  width: 100%;
+}
+.single-product-wrap .product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+}
+.single-product-wrap .product-title {
+  display: flex;
+  align-items: end;
+  gap: 1em;
+}
+.single-product-wrap .product-title h2 {
+  font-size: 34px;
+  font-weight: 600;
+}
+.single-product-wrap .product-title > span {
+  font-size: 18px;
+  font-weight: 500;
+}
+.single-product-wrap .tag-wrap {
+  display: inline-flex;
+  gap: 0.5em;
+  border: 1px solid var(--light-gray);
+  padding: 6px 10px;
+  font-size: 15px;
+}
+.single-product-wrap .price-info {
+  display: flex;
+  gap: 1em;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+.single-product-wrap .price-info .product-price {
+  margin: 0;
+  font-weight: 700;
+  font-size: 34px;
+}
+.single-product-wrap .price-info .selection {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+}
+.single-product-wrap .price-info .selection label {
+  min-width: 85px;
+}
+.single-product-wrap .price-info .selection select {
+  width: 100%;
+}
+
+/*# sourceMappingURL=single-product.css.map */

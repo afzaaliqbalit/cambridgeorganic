@@ -1,0 +1,110 @@
+#form-host-container {
+  /* Reusable Theme Specific Buttons */
+  .btn-brand-dark {
+    background-color: var(--brand-dark);
+    color: #ffffff;
+    border: 1.5px solid var(--brand-dark);
+    font-weight: 700;
+    border-radius: 50rem; /* pill */
+    padding: 0.8rem 1.5rem;
+    transition: all 0.2s ease-in-out;
+  }
+  .btn-brand-dark:hover {
+    background-color: var(--brand-dark-hover);
+    border-color: var(--brand-dark-hover);
+    color: #ffffff;
+  }
+
+  .btn-brand-outline-dark {
+    background-color: transparent;
+    color: var(--brand-textDark);
+    border: 1.5px solid var(--brand-dark);
+    font-weight: 600;
+    border-radius: 50rem; /* pill */
+    padding: 0.8rem 1.5rem;
+    transition: all 0.2s ease-in-out;
+  }
+  .btn-brand-outline-dark:hover {
+    background-color: rgba(4, 62, 43, 0.05);
+    color: var(--brand-textDark);
+    border-color: var(--brand-dark);
+  }
+
+  /* Custom Dots Progress styling to mirror screenshots */
+  .dots-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    margin-top: 3em;
+  }
+
+  .progress-dot-active {
+    position: relative;
+    width: 1.25rem;
+    height: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .progress-dot-active-outer {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid var(--red);
+    opacity: 0.4;
+  }
+  .progress-dot-active-inner {
+    width: 12px;
+    height: 12px;
+    background-color: var(--red);
+    border-radius: 50%;
+    border: 1px solid #ffffff;
+  }
+
+  .progress-dot-inactive {
+    width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 50%;
+    border: 2px solid var(--primary-green);
+    background-color: transparent;
+  }
+
+  .progress-dot-line {
+    height: 2px;
+    width: 1.5rem;
+  }
+  .progress-dot-line.filled {
+    background-color: var(--primary-green);
+  }
+  .progress-dot-line.empty {
+    background-color: var(--primary-green);
+  }
+
+  /* Live state JSON inspector */
+  .custom-pre {
+    background-color: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(25, 135, 84, 0.2);
+    color: #34d399;
+    font-size: 0.8rem;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #142d22;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #234c38;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2e6249;
+  }
+}

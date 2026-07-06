@@ -1,0 +1,165 @@
+/* STREAMING_CHUNK:Initializing design variables... */
+// ==========================================================================
+// Custom Quantity Stepper Variables
+// ==========================================================================
+
+// Color Palette (Matched perfectly to image_72e1e7.png)
+$stepper-color-decrement: #084c31 !default; // Deep forest green
+$stepper-color-increment: #719354 !default; // Muted olive green
+$stepper-color-value:     #111827 !default; // Dark slate/black
+$stepper-color-icon:      #ffffff !default; // Pure white for icons
+$stepper-focus-ring:      rgba(8, 76, 49, 0.15) !default; // Translucent green focus ring
+
+// Typography
+$stepper-font-weight:     500 !default;
+$stepper-font-size-val:   22px !default;
+$stepper-font-size-btn:   24px !default;
+
+// Sizing & Layout
+$stepper-height:          48px !default;
+$stepper-btn-width:       64px !default;
+$stepper-value-width:     66px !default; // Optimal room for dual digit numbers
+$stepper-gap:             0px !default; // Space between buttons and input
+
+// Micro-interactions
+$stepper-transition:      all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !default;
+$stepper-hover-brightness: 92% !default;
+$stepper-active-scale:     0.96 !default;
+
+/* STREAMING_CHUNK:Styling the layout and structural container... */
+// ==========================================================================
+// Component Styles
+// ==========================================================================
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $stepper-gap;
+  user-select: none;
+
+  // Base Button Configuration
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: $stepper-btn-width;
+    height: $stepper-height;
+    padding: 0;
+    border: none;
+    outline: none;
+    color: $stepper-color-icon;
+    font-size: $stepper-font-size-btn;
+    font-weight: normal;
+    cursor: pointer;
+    transition: $stepper-transition;
+
+    // Prevent tap highlight on mobile
+    -webkit-tap-highlight-color: transparent;
+
+    /* STREAMING_CHUNK:Configuring button hover and active interactive states... */
+    &:focus-visible {
+      outline: 2px solid $stepper-color-decrement;
+      outline-offset: 2px;
+    }
+
+    &:focus {
+      background-color: $stepper-color-decrement !important;
+    }
+
+    // Hover effect
+    &:hover:not(:disabled) {
+      background-color: $stepper-color-decrement !important;
+      filter: brightness($stepper-hover-brightness);
+    }
+
+    // Active scale-down press effect
+    &:active:not(:disabled) {
+      transform: scale($stepper-active-scale);
+    }
+
+    // Disabled state rule
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* STREAMING_CHUNK:Setting up specific button corner geometries... */
+    // Decrement Button Specific (Left Rounded Capsule Edge)
+    &--decrement {
+      background-color: $stepper-color-decrement !important;
+      border-radius: ($stepper-height / 2) 0 0 ($stepper-height / 2);
+    }
+
+    // Increment Button Specific (Right Rounded Capsule Edge)
+    &--increment {
+      background-color: $stepper-color-increment;
+      border-radius: 0 ($stepper-height / 2) ($stepper-height / 2) 0;
+    }
+  }
+
+  &.theme-orange {
+    .stepper__btn {
+      background-color: var(--theme-orange);
+    }
+  }
+
+  &.disabled {
+    pointer-events: none;
+  }
+
+  /* STREAMING_CHUNK:Styling the numeric input element... */
+  // Center Numeric Input Display
+  &__value {
+    display: block;
+    width: $stepper-value-width !important;
+    height: $stepper-height !important;
+    background-color: transparent !important;
+    border: 1px solid transparent !important; // Hidden border to avoid shift when focused
+    border-radius: 6px;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+
+    // Typography
+    color: $stepper-color-value;
+    font-family: inherit;
+    font-size: $stepper-font-size-val;
+    font-weight: $stepper-font-weight;
+    text-align: center;
+    line-height: $stepper-height;
+    box-sizing: border-box;
+    outline: none;
+    transition: $stepper-transition;
+
+    /* STREAMING_CHUNK:Suppressing native browser number spin controls... */
+    // Hide default Webkit spin utility arrows (Chrome, Safari, Safari iOS, newer Edge)
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    // Hide default Mozilla Firefox spin utility layout
+    -moz-appearance: textfield;
+
+    /* STREAMING_CHUNK:Defining focus and selection highlights... */
+    // Soft focus ring for manual keyboard typing states
+    &:focus {
+      background-color: rgba($stepper-color-decrement, 0.02);
+      border-color: rgba($stepper-color-decrement, 0.3);
+      box-shadow: 0 0 0 4px $stepper-focus-ring;
+    }
+
+    // Highlight text selection background matching the palette
+    &::selection {
+      background-color: rgba($stepper-color-increment, 0.25);
+    }
+
+  }
+}

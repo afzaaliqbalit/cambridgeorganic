@@ -5,7 +5,9 @@
  Version:      1.0.0
 */
 :root {
-  --orange: #e77538 ;
+  --orange: #e77538;
+  --container-width: 1400px;
+  --red: #c41230;
 }
 
 .header-container {
@@ -18,6 +20,11 @@
   width: 100%;
   left: 0;
   margin-top: 30px;
+}
+
+.page-content, .single-product #main {
+  margin: auto;
+  max-width: var(--container-width);
 }
 
 .header-container .menu-item .sub-menu .container {
@@ -37,10 +44,13 @@
   padding: 6px 2em;
   border-radius: 32px;
 }
-
 .button:hover {
   background-color: var(--e-global-color-004fee8);
   color: #fff;
+}
+.button.btn-large {
+  padding: 12px 24px;
+  min-width: max-content;
 }
 
 .btn:has(.elementor-button) .elementor-button {
@@ -72,62 +82,6 @@
 
 .header-container {
   background-color: #fff;
-}
-
-.primary-menu {
-  display: flex;
-  justify-content: center;
-  gap: 1em;
-}
-
-.primary-menu .menu-item > .button {
-  position: relative;
-  padding: 8px 2.2em;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  --arrow-color: var(--e-global-color-accent);
-}
-
-.primary-menu .menu-item > .button.has-children:before {
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 6px solid var(--arrow-color);
-  content: "";
-  position: absolute;
-  right: 14px;
-  top: 54%;
-  transform: translateY(-50%);
-}
-
-.primary-menu .menu-item > .button.has-children {
-  padding-right: 44px;
-}
-
-.primary-menu .menu-item > .button:not(.active) {
-  color: var(--e-global-color-accent);
-  background-color: #fff;
-}
-
-.primary-menu .menu-item > .button:not(.active):hover {
-  background-color: var(--e-global-color-33c9d76);
-}
-
-.primary-menu .menu-item > .button.active {
-  font-weight: 500;
-  --arrow-color: #fff;
-}
-
-.primary-menu .menu-item > .button.active:after {
-  height: calc(100% - 3px);
-  width: 2px;
-  background-color: var(--e-global-color-accent);
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  content: "";
-  top: 100%;
 }
 
 .product-grid {
@@ -172,24 +126,6 @@ form .form-control[class] {
   padding: 12px 18px;
 }
 
-.icon-people {
-  background-image: url("../../uploads/2026/01/icon-people.svg");
-  width: 30px;
-  height: 22px;
-  display: inline-block;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.icon-vegebox {
-  background-image: url("../../uploads/2026/01/icon-vegebox.svg");
-  width: 34px;
-  height: 18px;
-  display: inline-block;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
 form.postcode-search {
   display: flex;
   flex-direction: column;
@@ -203,86 +139,6 @@ form.postcode-search .form-group {
   justify-content: center;
 }
 
-.product-boxes {
-  display: flex;
-  gap: 15px;
-}
-.product-boxes > div {
-  width: 100%;
-}
-
-.product-box {
-  background-color: #e6e8e7;
-}
-.product-box .thumbnail {
-  padding: 0;
-  margin: 0;
-}
-.product-box .thumbnail img {
-  display: block;
-  width: 100%;
-}
-.product-box .box-data {
-  padding: 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.product-box .box-data .prod-name {
-  font-size: 24px;
-  text-align: center;
-  font-weight: 500;
-}
-.product-box .box-data .prod-name span {
-  font-weight: 700;
-}
-.product-box .box-data .box-meta {
-  display: flex;
-  background-color: #fff;
-  padding: 8px 0;
-}
-.product-box .box-data .box-meta > div {
-  flex: 1;
-  padding: 6px 18px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0 15px;
-  font-size: 15px;
-}
-.product-box .box-data .box-meta > div:first-child {
-  border-right: 1px solid #ccc;
-}
-.product-box .box-data .box-meta .icon-people {
-  width: 26px;
-  height: 18px;
-}
-.product-box .box-data .box-meta .icon-vegebox {
-  width: 32px;
-  height: 18px;
-}
-.product-box .box-data .box-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 20px;
-}
-.product-box .box-data .box-footer h4, .product-box .box-data .box-footer h5 {
-  margin-bottom: 0;
-  padding-bottom: 0;
-  margin-top: 0;
-}
-.product-box .box-data .box-footer h5 {
-  font-size: 18px;
-}
-.product-box .box-data .box-footer .prod-price {
-  font-weight: 700;
-  font-size: 32px;
-}
-.product-box .box-data .box-footer .btn {
-  padding: 10px 38px 10px;
-}
-
 .wpsf-form-wrap.wpsf-template-1 {
   padding: 0 !important;
 }
@@ -294,9 +150,6 @@ form.postcode-search .form-group {
   border: 1px solid #cccccc !important;
   padding: 12px 18px;
   background-color: #fff !important;
-}
-.wpsf-subscription_form .wpsf-email[class]::-moz-placeholder {
-  color: var(--e-global-color-accent);
 }
 .wpsf-subscription_form .wpsf-email[class]::placeholder {
   color: var(--e-global-color-accent);
@@ -313,4 +166,6 @@ form.postcode-search .form-group {
 .active_section {
   background-color: #f1f1f1;
   border: 1px solid;
-}/*# sourceMappingURL=style.css.map */
+}
+
+/*# sourceMappingURL=style.css.map */
