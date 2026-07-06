@@ -1,6 +1,0 @@
-https://staging.cambridgeorganic.co.uk/
-
-admin: admin_hs8nwlrv
-pass: mt1G0UCb%8g5O~g0
-
-local: cambridgeorganic
