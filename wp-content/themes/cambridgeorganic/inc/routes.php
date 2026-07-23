@@ -6,7 +6,8 @@ function endpoint_remote_request() {
     }
     $action_map = [
       'customer-login' => 'endpoint_customer_login',
-      'get_postcode_routes' => 'get_postcode_routes'
+      'get_postcode_routes' => 'get_postcode_routes',
+      'getproduct' => 'get_remote_product',
     ];
 
     $current_action = get_query_var('remote_endpoint');
@@ -23,17 +24,20 @@ add_action('init', function () {
     add_rewrite_rule('^customer/?$', 'index.php?account_page=home', 'top');
     add_rewrite_rule('^customer/([^/]+)/?$', 'index.php?account_page=$matches[1]', 'top');
     add_rewrite_rule('^remote-request/([^/]+)/?$', 'index.php?remote_endpoint=$matches[1]', 'top');
+    add_rewrite_rule('^cart_action/([^/]+)/?$', 'index.php?cart_action=$matches[1]', 'top');
 });
 
 add_filter('query_vars', function ($vars) {
     $vars[] = 'camb_product_slug';
     $vars[] = 'account_page';
     $vars[] = 'remote_endpoint';
+    $vars[] = 'cart_action';
     return $vars;
 });
 
 add_action('template_redirect', function () {
     if (get_query_var('remote_endpoint')) { endpoint_remote_request(); }
+    if (get_query_var('cart_action')) { endpoint_cart_actions(get_query_var('cart_action')); }
 });
 
 function load_custom_product_template($template)

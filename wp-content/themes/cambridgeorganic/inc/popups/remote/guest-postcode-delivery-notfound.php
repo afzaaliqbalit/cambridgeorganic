@@ -1,4 +1,9 @@
-<div id="form-host-container" class="w-100 d-flex justify-content-center">
+<div id="form-host-container" class="w-100 d-flex justify-content-center step-form">
+    <div class="head-icon">
+        <div class="btn-back">
+            <i class="icon-back" onclick="user_login_modal();"></i>
+        </div>
+    </div>
     <div class="text-center fs-16">
         <!-- Delivery Truck Graphic illustration as SVG -->
         <div class="mx-auto mb-2" style="max-width: 230px;">

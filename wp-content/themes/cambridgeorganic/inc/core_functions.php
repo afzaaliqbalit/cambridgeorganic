@@ -14,6 +14,57 @@ function pr($array = [], $exit = true)
     }
 }
 
+function get_current_page() {
+    global $post;
+
+    // Singular pages/posts/CPTs
+    if (is_singular() && isset($post->post_name)) {
+        return $post->post_name;
+    }
+
+    // Posts page
+    if (is_home()) {
+        return get_post_field('post_name', get_option('page_for_posts'));
+    }
+
+    // Static front page
+    if (is_front_page()) {
+        return get_post_field('post_name', get_option('page_on_front'));
+    }
+
+    // Taxonomy archive
+    if (is_category() || is_tag() || is_tax()) {
+        return get_queried_object()->slug;
+    }
+
+    // Post type archive
+    if (is_post_type_archive()) {
+        return get_query_var('post_type');
+    }
+
+    // Author archive
+    if (is_author()) {
+        return get_queried_object()->user_nicename;
+    }
+
+    // Date archive
+    if (is_date()) {
+        return 'date';
+    }
+
+    // Search
+    if (is_search()) {
+        return 'search';
+    }
+
+    // 404
+    if (is_404()) {
+        return '404';
+    }
+
+    return '';
+}
+
 function wp_register_styles()
 {
     wp_enqueue_style('owl-style', 'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.css');
@@ -32,7 +83,8 @@ function wp_register_styles()
     wp_enqueue_script('datepicker-script', 'https://cdn.jsdelivr.net/npm/flatpickr');
     wp_enqueue_script('tooltip-script', get_stylesheet_directory_uri() . '/assets/js/tooltip.js');
     wp_enqueue_script('remote-script', get_stylesheet_directory_uri() . '/assets/js/remote.js');
-    wp_enqueue_script('sessionstorage-script', get_stylesheet_directory_uri() . '/assets/js/sessionstorage.js');
+    wp_enqueue_script('sessionstorage-script', get_stylesheet_directory_uri() . '/assets/js/sessionstorage.js', ['jquery'], null, true);
+    wp_enqueue_script('cart-script', get_stylesheet_directory_uri() . '/assets/js/cart.js');
 
     wp_enqueue_style('single-product-style', get_stylesheet_directory_uri() . '/assets/css/single-product.css', [], null);
     wp_enqueue_style('checkout-style', get_stylesheet_directory_uri() . '/assets/css/checkout.css', [], null);
@@ -41,14 +93,17 @@ function wp_register_styles()
     wp_enqueue_style('bootstrap-utilities', get_stylesheet_directory_uri() . '/assets/css/bootstrap-utilities.min.css');
     wp_enqueue_style('step-form-style', get_stylesheet_directory_uri() . '/assets/css/step-form.css');
     wp_enqueue_style('datepicker-style', 'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css');
+    wp_enqueue_style('profile-css', get_stylesheet_directory_uri() . '/assets/css/profile.css');
 
-    if(is_user()) {
-        wp_enqueue_style('profile-css', get_stylesheet_directory_uri() . '/assets/css/profile.css');
+    if(is_user() || get_current_page() == 'checkout') {
         wp_enqueue_script('profile-js', get_stylesheet_directory_uri() . '/assets/js/profile.js');
     }
     wp_enqueue_style('responsive-style', get_stylesheet_directory_uri() . '/assets/css/responsive.css');
-
 }
+
+wp_localize_script('sessionstorage-script', 'theme_vars', [
+    'ajax_url' => admin_url('admin-ajax.php'),
+]);
 
 add_action('wp_enqueue_scripts', 'wp_register_styles');
 
@@ -57,6 +112,7 @@ add_action('wp_head', function () {
     <script>
         window.theme_url = '<?php echo esc_js(get_stylesheet_directory_uri()); ?>/';
         window.site_url = '<?php echo site_url(); ?>/';
+        window.is_login = <?php echo is_login() ? 1 : 0; ?>;
     </script>
     <?php
 });
@@ -141,4 +197,34 @@ function box_servings($box_size='') {
         case 'large':
             return '5-6';
     }
+}
+
+function progress_dots($data = array())
+{
+    $count  = isset($data['count']) ? (int)$data['count'] : 0;
+    $active = isset($data['active']) ? (int)$data['active'] : 0;
+
+    if ($count <= 0) {
+        return;
+    }
+    ob_start();
+    ?>
+    <div class="dots-wrapper">
+        <?php for ($i = 1; $i <= $count; $i++) { ?>
+
+            <div class="<?php echo ($i <= $active) ? 'progress-dot-active' : 'progress-dot-inactive'; ?>">
+                <div class="progress-dot-active-outer"></div>
+                <?php if(($i <= $active)) { ?>
+                <div class="progress-dot-active-inner"></div>
+                <?php } ?>
+            </div>
+
+            <?php if ($i < $count) { ?>
+                <div class="progress-dot-line <?php echo $i < $active ? 'filled':'empty' ?>"></div>
+            <?php } ?>
+
+        <?php } ?>
+    </div>
+    <?php
+    return ob_get_clean();
 }

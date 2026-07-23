@@ -4,7 +4,7 @@ class ApiClient
 {
     private $baseUrl = 'https://dev.zeeteck.com/projects/ordle-dev/api/v1';
 
-    protected function request($method, $endpoint, array $data = [], $json_encode=false)
+    public function request($method, $endpoint, array $data = [], $json_encode=false)
     {
         $url = $this->baseUrl . $endpoint;
 
@@ -48,10 +48,20 @@ class ApiClient
 
         $result = json_decode($response, true);
 
-        if (empty($result['success'])) {
+//        echo $url;
+//        pr($result, false);
+
+
+        if ((empty($result['success']) && empty($result['status'])) || (!empty($result['status'])) && $result['status'] !== 'success') {
+
+            $err_msgs = !empty($result['message']) ? $result['message'] : '';
+            if(empty($err_msgs)) {
+                $err_msgs = !empty($result['error']) ? $result['error'] : '';
+            }
+
             $errors = [
                 'success' => 0,
-                'message' => $result['message']
+                'message' => $err_msgs
             ];
             if(!empty($result['errors'])) {
                 foreach ($result['errors'] as $key => $error) {

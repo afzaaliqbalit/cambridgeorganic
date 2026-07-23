@@ -2,6 +2,10 @@
 include "inc/core_functions.php";
 require_once "remote/remote.php";
 require_once "inc/routes.php";
+require_once "inc/Cart.php";
+require_once "remote/php_session.php";
+require_once "inc/user_functions.php";
+require_once "inc/cart_functions.php";
 
 function get_menu_nav(): array {
     $grouped_items = [];
@@ -184,10 +188,11 @@ function fix_svg_media_library_display() {
 add_action('admin_head', 'fix_svg_media_library_display');
 
 function cart_basket_html() {
+    $cart = new Cart();
     ?>
     <div class="basket-badge-container">
         <i class="icon-basket"></i>
-        <span class="badge-total-items">5</span>
+        <span class="badge-total-items"><?php echo $cart->getCount() ?></span>
     </div>
     <?php
 }
@@ -195,16 +200,11 @@ function cart_basket_html() {
 function camb_postcode_search_form() {
     ob_start();
     ?>
-    <form method="get" class="postcode-search">
+    <form id="validate-guest-postcode-form" class="validate w-100 prevent-enter">
         <div class="form-group">
-            <input type="text" placeholder="Enter your postcode (e.g. CB2 VEG)" class="form-control" name="postcode" id="postcode">
+            <input type="text" class="ul-input-postcode guest-signup-postcode" placeholder="Enter your postcode (e.g. CB2 1FD)" required data-error="Your postcode is required.">
         </div>
-        <div class="form-group">
-            <button type="submit" class="btn orange">Enter & Start Shopping</button>
-        </div>
-        <div class="form-group">
-            <label>Or <a href="<?php echo site_url('login') ?>">sign in</a> to your account</label>
-        </div>
+        <button type="button" class="ul-btn button btn-primary" onclick="guest_postcode_delivery_modal(this)">Enter Postcode</button>
     </form>
     <?php
     return ob_get_clean();
@@ -219,7 +219,7 @@ function camb_product_boxes($args=[]) {
 
     ob_start();
     ?>
-    <div class="product-boxes">
+    <div class="catalog-boxes">
         <?php
         for($i=1; $i<=$atts['limit']; $i++) {
             get_template_part('templates/shop', 'product-box');
@@ -344,14 +344,6 @@ function cambridge_products_shortcode($atts=[]) {
 
 add_shortcode('camb-product-slider' , 'cambridge_products_shortcode');
 
-function cambridge_checkout_form_shortcode($atts=[]) {
-    ob_start();
-    get_template_part('templates/shop','checkout-form');
-    return ob_get_clean();
-}
-
-add_shortcode('camb-checkout-form', 'cambridge_checkout_form_shortcode');
-
 function cambridge_signing_btn_shortcode() {
     if(!is_user()) {
     ?>
@@ -364,6 +356,8 @@ add_shortcode('camb-signin-btn', 'cambridge_signing_btn_shortcode');
 
 function cambridge_cart_icon_count_shortcode() {
     global $user;
+
+    $cart = new Cart();
     ob_start();
     ?>
     <div class="head-user-info">
@@ -374,11 +368,21 @@ function cambridge_cart_icon_count_shortcode() {
         <div class="user-info-wrapper">
             <a data-tooltip="customer-icon-menu" href="<?php echo site_url('customer') ?>"><span class="user-initial"><?php echo substr($first_name,0,1) ?></span><i class="icon-user"></i></a>
         </div>
-        <?php } ?>
-        <div class="basket-badge-container">
-            <i class="icon-basket"></i>
-            <span class="badge-total-items">0</span>
-        </div>
+        <?php }
+        /*href="<?php
+            $cart_link = '';
+            if(is_login()) {
+                $cart_link = site_url('checkout');
+            }elseif(!is_login() && $cart->getCount() > 0) {
+                $cart_link = site_url('create-account');
+            }
+            echo $cart->getCount() > 0 ? $cart_link:'#' ?>"*/
+        $cart_count = $cart->getCount();
+        ?>
+            <a class="basket-badge-container" <?php echo $cart_count > 0 ? 'onclick="cart_toggle()"':'' ?>>
+                <i class="icon-basket"></i>
+                <span class="badge-total-items"><?php echo $cart_count ?></span>
+            </a>
     </div>
     <?php
     return ob_get_clean();
@@ -388,10 +392,23 @@ add_shortcode('camb-cart-counter', 'cambridge_cart_icon_count_shortcode');
 
 function cambridge_cart_subtotalText_shortcode() {
     ob_start();
+    $cart = new Cart();
     ?>
-    <div class="basket-subtotal-price"><?php echo price(0) ?></div>
+    <div class="basket-subtotal-price"><?php echo $cart ? price($cart->getTotal()) : 0 ?></div>
     <?php
     return ob_get_clean();
 }
 
 add_shortcode('camb-cart-subtotal-text', 'cambridge_cart_subtotalText_shortcode');
+
+function cambridge_login_singup_form_shortcode() {
+    ob_start();
+    ?>
+    <div id="user-login-signup-wrapper">
+        <?php get_template_part('templates/user','login-signup-form'); ?>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+
+add_shortcode('cambi_login_signup_form', 'cambridge_login_singup_form_shortcode');

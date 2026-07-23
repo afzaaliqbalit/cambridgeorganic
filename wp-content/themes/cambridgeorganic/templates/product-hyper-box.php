@@ -17,7 +17,7 @@ $product = $args['product'];
             <h4 class="prod-price"><?php echo price($product['net_selling_price']) ?></h4>
 
             <div class="tooltip-wrapper">
-                <button type="button" class="btn orange" data-tooltip="login-tooltip-content">Select</button>
+                <button type="button" class="btn orange" data-slug="<?php echo $product['slug'] ?>" data-price="<?php echo $product['net_selling_price'] ?>" data-tooltip="login-tooltip-content">Select</button>
             </div>
         </div>
     </div>

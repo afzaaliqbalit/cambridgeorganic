@@ -1,5 +1,5 @@
 function validate_input_field(field, e = null, report_validity = true) {
-    let error = field.dataset.error;
+    let error = field.dataset.error || 'Required field is missing.';
     let is_valid = true;
 
     // Remove any previous error messages
@@ -237,11 +237,116 @@ function nav_switcher() {
     primaryMenu.addEventListener('mouseenter', cancelRevert);
 }
 
+window.reloadElement = async (element, url = '') => {
+    // Determine selector type (#id or .class)
+    let elements = [];
+    if (element.startsWith('#')) {
+        const el = document.querySelector(element);
+        if (el) elements.push(el);
+    } else if (element.startsWith('.')) {
+        elements = [...document.querySelectorAll(element)];
+    } else {
+        // fallback: assume ID if no prefix
+        const el = document.getElementById(element);
+        if (el) elements.push(el);
+    }
+    if (elements.length === 0) {
+        console.warn(`reloadElement: No element found for selector "${element}"`);
+        return;
+    }
+    try {
+        for (let el of elements) {
+            el.classList.add('loading');
+        }
+        // Determine URL to fetch (if not provided, use current page)
+        const fetchUrl = url || window.location.href;
+        const response = await fetch(fetchUrl, {
+            method: 'GET',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        if (!response.ok) throw new Error(`Failed to fetch ${fetchUrl}: ${response.statusText}`);
+        const text = await response.text();
+        // Create a DOM parser to extract the new element(s)
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+
+        for (let el of elements) {
+            // Find matching element in fetched HTML
+            let selector = '';
+            if (el.id) selector = `#${el.id}`;
+            else if (el.classList.length > 0) selector = `.${el.classList[0]}`;
+            else continue;
+
+            const newContent = doc.querySelector(selector);
+            if (newContent) {
+                el.innerHTML = newContent.innerHTML;
+            } else {
+                console.warn(`reloadElement: Matching content not found for "${selector}"`);
+            }
+            el.classList.remove('loading');
+        }
+    } catch (err) {
+        console.error('reloadElement error:', err);
+    }
+};
+
+window.validateUKPostcode = function(postcode) {
+    if (!postcode) {
+        return {
+            valid: false,
+            postcode: '',
+            error: 'Postcode is required.'
+        };
+    }
+
+    // Remove whitespace and convert to uppercase
+    postcode = postcode.replace(/\s+/g, '').toUpperCase();
+
+    // UK postcode regex (supports GIR 0AA)
+    const regex = /^(GIR0AA|(?:[A-PR-UWYZ][0-9][0-9A-HJKSTUW]?|[A-PR-UWYZ][A-HK-Y][0-9][0-9ABEHMNPRVWXY]?)([0-9][ABD-HJLNP-UW-Z]{2}))$/;
+
+    const match = postcode.match(regex);
+
+    if (!match) {
+        return {
+            valid: false,
+            postcode: postcode,
+            error: 'Invalid postcode.'
+        };
+    }
+
+    // Insert the space before the inward code
+    const formatted = postcode.slice(0, -3) + ' ' + postcode.slice(-3);
+
+    return {
+        valid: true,
+        postcode: formatted,
+        error: null
+    };
+}
+
+// Prevent submitting forms with the .prevent-enter class by pressing Enter
+document.addEventListener('submit', function (e) {
+    if (e.target.matches('form.prevent-enter')) {
+        const submitter = e.submitter;
+
+        if (
+            !submitter ||
+            (submitter.tagName !== 'BUTTON' &&
+                (submitter.tagName !== 'INPUT' || submitter.type !== 'submit'))
+        ) {
+            e.preventDefault();
+        }
+    }
+}, true);
 
 document.addEventListener("DOMContentLoaded", ()=>{
-    new Accordion(".accordion-container",{
-        duration: 400,
-    });
+
+    if(document.querySelector(".accordion-container")) {
+        new Accordion(".accordion-container",{
+            duration: 400,
+        });
+    }
 
     form_validate_init();
 
@@ -341,17 +446,82 @@ document.addEventListener("DOMContentLoaded", ()=>{
 window.addEventListener('load', () => {
     init_placeholders();
 });
-window.init_inline_datepicker = ()=>{
-    $('.inline-datepicker-wrap:not(.init)').each(function(i) {
-        const altInput = $(this).find('input');
-        const parent = this;
-        altInput.flatpickr({
-            appendTo: parent,
-            inline: true
-        });
-        $(this).addClass('init');
-    });
+
+function flatpicker_options(input, data) {
+    const options = {
+        ...(input.data() || {}),
+        ...(data.options || {}),
+    };
+
+    // data-from -> minDate
+    if (options.from) {
+        options.minDate = options.from;
+        delete options.from;
+    }
+
+    // data-to -> maxDate
+    if (options.to) {
+        options.maxDate = options.to;
+        delete options.to;
+    }
+
+    // data-selected -> defaultDate
+    if (options.selected) {
+        options.defaultDate = options.selected;
+        delete options.selected;
+    }
+
+    // data-start-from / data-end-to -> defaultDate
+    if (options.startFrom || options.endTo) {
+        if ((options.mode || '').toLowerCase() === 'range') {
+            options.defaultDate = [
+                options.startFrom || null,
+                options.endTo || null
+            ].filter(Boolean);
+        } else {
+            options.defaultDate = options.startFrom || options.endTo;
+        }
+
+        delete options.startFrom;
+        delete options.endTo;
+    }
+
+    // data-weekdays="1,2,3,4,5"
+    // Only allow selected weekdays (0=Sun ... 6=Sat)
+    if (options.weekdays) {
+        const allowedDays = String(options.weekdays)
+            .split(',')
+            .map(v => parseInt(v.trim(), 10))
+            .filter(v => !isNaN(v));
+
+        options.disable = [
+            function (date) {
+                return allowedDays.indexOf(date.getDay()) === -1;
+            }
+        ];
+
+        delete options.weekdays;
+    }
+    return options;
 }
+
+window.init_inline_datepicker = (data = {}) => {
+    $(data.element || '.inline-datepicker-wrap:not(.init)').each(function () {
+        const wrapper = $(this);
+        const input = wrapper.find('input');
+        const options = flatpicker_options(input, data);
+
+        console.log(options);
+
+        input.flatpickr({
+            appendTo: this,
+            inline: true,
+            ...options
+        });
+
+        wrapper.addClass('init');
+    });
+};
 
 jQuery(document).ready(function ($) {
     $('.product-scroller').owlCarousel({

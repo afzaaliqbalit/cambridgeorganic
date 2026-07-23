@@ -139,6 +139,10 @@ form.postcode-search .form-group {
   justify-content: center;
 }
 
+.form-group label {
+  padding-bottom: 8px;
+}
+
 .wpsf-form-wrap.wpsf-template-1 {
   padding: 0 !important;
 }

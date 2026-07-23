@@ -1,4 +1,4 @@
-#form-host-container {
+.step-form {
   /* Reusable Theme Specific Buttons */
   .btn-brand-dark {
     background-color: var(--brand-dark);
@@ -68,6 +68,7 @@
     border-radius: 50%;
     border: 2px solid var(--primary-green);
     background-color: transparent;
+    position: relative;
   }
 
   .progress-dot-line {
@@ -78,7 +79,7 @@
     background-color: var(--primary-green);
   }
   .progress-dot-line.empty {
-    background-color: var(--primary-green);
+    background-color: var(--input-border-color);
   }
 
   /* Live state JSON inspector */

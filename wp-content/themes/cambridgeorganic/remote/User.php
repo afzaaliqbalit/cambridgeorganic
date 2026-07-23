@@ -52,10 +52,21 @@ class User extends ApiClient
         return $_SESSION['api_token_type'] . ' ' . $_SESSION['api_token'];
     }
 
-    function getPostCode($postcode='') {
+    function getPostCode($postcode='', $refresh = false) {
+
         $response = $this->request('GET', '/customers/postcode-info', [
             'postcode' => $postcode
         ]);
+
+        $routeDay = !empty($response['data'][0]['RouteDay']) ? $response['data'][0]['RouteDay'] : '';
+
+        if($routeDay) {
+            $cart = new Cart();
+            $routeInfo = $cart->getRouteInfo(['RouteDay' => $routeDay]);
+
+            $_SESSION['postcode_info'] = $routeInfo;
+            $response['routeInfo'] = $routeInfo;
+        }
 
         return $response;
     }

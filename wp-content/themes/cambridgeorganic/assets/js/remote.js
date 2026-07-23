@@ -71,6 +71,7 @@ window.get_remote_request = async function (endpoint='', attrs = {}) {
     endpoint = site_url+'remote-request/'+endpoint;
 
     try {
+
         let $fetch_attrs = {
             method: 'POST',
             headers: {
@@ -78,6 +79,12 @@ window.get_remote_request = async function (endpoint='', attrs = {}) {
             },
             body: JSON.stringify(attrs)
         };
+
+        if(!Object.keys(attrs).length) {
+            $fetch_attrs = {
+                method: 'GET'
+            };
+        }
 
         const response = await fetch(endpoint, $fetch_attrs);
 

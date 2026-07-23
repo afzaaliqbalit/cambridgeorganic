@@ -3,15 +3,24 @@
 function cambridge_products($args=[]) {
     $attr = shortcode_atts([
         'cat'=>'',
-        'type' => 'single'
+        'type' => 'single',
+        'limit' => 9,
     ],$args);
     $products = new Products();
 
     if($attr['type'] === 'single') {
-        $getProducts = $products->getProducts();
+        $getProducts = $products->getProducts([
+            'limit' => $attr['limit']
+        ]);
     }
     if($attr['type'] === 'hyper') {
-        $getProducts = $products->gethyperproducts();
+        $getProducts = $products->gethyperproducts([
+            'limit' => $attr['limit']
+        ]);
+    }
+
+    if(!empty($attr['limit'])) {
+        $getProducts = array_splice($getProducts,0,$attr['limit']);
     }
 
    ob_start();
@@ -23,6 +32,7 @@ function cambridge_products($args=[]) {
             'products' => $getProducts,
             'cat'      => $attr['cat'],
             'type'      => $attr['type'],
+            'limit'      => $attr['limit'],
         ]
     );
 
@@ -44,7 +54,7 @@ function endpoint_customer_login()
     exit;
 }
 
-function get_postcode_routes() {
+function get_postcode_routes($reload = false) {
     global $user;
 
     $params = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
@@ -58,9 +68,10 @@ function get_postcode_routes() {
         exit;
     }
 
-    $send_req = $user->getPostcode($postcode);
+    $send_req = $user->getPostcode($postcode, true);
 
     ob_start();
+
     if(!empty($send_req['success'])) {
         get_template_part('inc/popups/remote/signup-popup-steps', null, $send_req);
     }else {
@@ -72,4 +83,34 @@ function get_postcode_routes() {
     echo json_encode($send_req);
 
     exit;
+}
+
+function get_remote_product() {
+    $product = new Products();
+    $params = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
+    if (empty($params)) {
+        $params = json_decode(file_get_contents('php://input'), true);
+    }
+    if(!empty($params['product_slug'])) {
+        $data = $product->getProduct($params['product_slug']);
+
+        echo json_encode($data);
+    }
+    exit;
+}
+
+function getDeliveryFrequencies() {
+    if(!empty($_SESSION['delivery_frequencies'])) {
+        return $_SESSION['delivery_frequencies'];
+    }else {
+        $apiClient = new APIClient();
+        $fetchRec = $apiClient->request('GET', '/settings/fetchFrequency');
+
+        if(!empty($fetchRec['data']['frequencyschedules'])) {
+            $_SESSION['delivery_frequencies'] = $fetchRec['data']['frequencyschedules'];
+            return $fetchRec['data']['frequencyschedules'];
+        }
+    }
+
+    return [];
 }

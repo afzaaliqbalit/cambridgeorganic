@@ -19,7 +19,7 @@ $transition-speed: 0.2s ease;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
   // Customizing the SweetAlert close button (Top Right 'X')
-  .swal2-close {
+  .swal2-close, .btn-back {
     background-color: var(--primary-green);
     color: #ffffff;
     border-radius: 100px;
@@ -42,6 +42,23 @@ $transition-speed: 0.2s ease;
       background-color: var(--primary-green-hover);
       color: $color-text-white; // Ensures text stays white on hover
     }
+  }
+
+  .icon-back {
+    background-color: #fff;
+    mask-image: url(../images/arrow-back.svg);
+    mask-repeat: no-repeat;
+    mask-position: center;
+    display: block;
+    width: 100%;
+    height: 100%;
+    mask-size: 65%;
+  }
+
+  .head-icon {
+    position: absolute;
+    top: 0px;
+    left: 18px;
   }
 
   #swal2-html-container {
@@ -180,173 +197,181 @@ $btn-hover: #125534;
             box-shadow: none;
         }
     }
-	
-	/* ========================================================
-   CUSTOM MODAL CONTENT LAYOUT
-   ======================================================== */
-.user-login-wrapper {
-    display: flex;
-  width: 1024px;
-    color: $primary-dark;
-    text-align: left;
-
-    // Responsive Design mixed into parent
-    @media (max-width: 800px) {
-        width: 100%;
-        flex-direction: column;
-    }
-
-    /* Left Panel - New Customer */
-    .ul-left-panel {
-        flex: 1.1;
-        background-color: $bg-left;
-        padding: 40px 50px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-
-        @media (max-width: 800px) {
-            padding: 30px 20px;
-        }
-    }
-
-    .ul-heading-left {
-        font-size: 24px;
-        font-weight: 500;
-        margin: 0 0 20px 0;
-        line-height: 1.3;
-    }
-
-    .ul-van-wrapper {
-        margin: 15px 0 25px 0;
-      img {
-        width: 240px;
-      }
-    }
-
-    .ul-text {
-        font-size: 15px;
-        line-height: 1.4;
-        margin-bottom: 25px;
-        font-weight: 500;
-    }
-
-    .ul-input-postcode {
-        width: 100%;
-        max-width: 280px;
-        padding: 12px;
-        border: 1px solid $primary-dark;
-        border-radius: 2px;
-        text-align: center;
-        font-size: 14px;
-        margin-bottom: 10px;
-        outline: none;
-        font-family: inherit;
-        
-        &::placeholder {
-            color: #777;
-        }
-    }
-
-    #validate-guest-postcode-form {
-      button {
-        margin-top: 2em;
-      }
-    }
-
-    /* Right Panel - Existing Customer */
-    .ul-right-panel {
-        flex: 0.6;
-        background-color: $bg-right;
-        padding: 40px 30px;
-        position: relative;
-
-        @media (max-width: 800px) {
-            padding: 30px 20px;
-        }
-    }
-
-    .ul-heading-right {
-        font-size: 24px;
-        font-weight: 500;
-        margin: 0 0 30px 0;
-        text-align: center;
-    }
-
-    .ul-sign-in-box {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 15px;
-        margin-bottom: 35px;
-    }
-
-    .ul-subheading {
-        font-size: 20px;
-        font-weight: 500;
-        margin: 0;
-    }
 
 
-    .ul-btn-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 30px;
-        margin-bottom: 30px;
-    }
-
-    .ul-forgot-pwd {
-        font-size: 13px;
-        line-height: 1.5;
-        display: flex;
-        align-items: flex-start;
-        justify-content: center;
-        gap: 8px;
-        text-align: center;
-        margin: 0;
-        font-weight: 500;
-
-        i {
-          font-size: 16px;
-          vertical-align: middle;
-          width: 14px;
-          height: 16px;
-          margin-top: -3px;
-          margin-right: 1px;
-        }
-
-        a {
-            color: $primary-dark;
-            font-weight: 600;
-            text-decoration: underline;
-        }
-    }
 }
-	
-	// Global UI Button 
-.ul-btn {
-    background-color: $primary-dark;
-    color: white;
-    border: none;
-    border-radius: 25px; /* Pill shape */
-    padding: 12px 35px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    display: inline-flex;
+
+/* ========================================================
+CUSTOM MODAL CONTENT LAYOUT
+======================================================== */
+.user-login-wrapper {
+  display: flex;
+  width: 1024px;
+  color: $primary-dark;
+  text-align: left;
+
+  // Responsive Design mixed into parent
+  @media (max-width: 800px) {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  /* Left Panel - New Customer */
+  .ul-left-panel {
+    flex: 1.1;
+    background-color: $bg-left;
+    padding: 40px 50px;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
+    text-align: center;
+
+    @media (max-width: 800px) {
+      padding: 30px 20px;
+    }
+  }
+
+  .ul-heading-left {
+    font-size: 24px;
+    font-weight: 500;
+    margin: 0 0 20px 0;
+    line-height: 1.3;
+  }
+
+  .ul-van-wrapper {
+    margin: 15px 0 25px 0;
+    img {
+      width: 240px;
+    }
+  }
+
+  .ul-text {
+    font-size: 15px;
+    line-height: 1.4;
+    margin-bottom: 25px;
+    font-weight: 500;
+  }
+
+  .ul-input-postcode {
+    width: 100%;
+    max-width: 280px;
+    padding: 12px;
+    border: 1px solid $primary-dark;
+    border-radius: 2px;
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 10px;
+    outline: none;
     font-family: inherit;
 
-    &:hover {
-        background-color: $btn-hover;
+    &::placeholder {
+      color: #777;
     }
-}
+  }
+
+  #validate-guest-postcode-form {
+    button {
+      margin-top: 2em;
+    }
+  }
+
+  /* Right Panel - Existing Customer */
+  .ul-right-panel {
+    flex: 0.6;
+    background-color: $bg-right;
+    padding: 40px 30px;
+    position: relative;
+
+    @media (max-width: 800px) {
+      padding: 30px 20px;
+    }
+  }
+
+  .ul-heading-right {
+    font-size: 24px;
+    font-weight: 500;
+    margin: 0 0 30px 0;
+    text-align: center;
+  }
+
+  .ul-sign-in-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 35px;
+  }
+
+  .ul-subheading {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0;
+  }
+
+
+  .ul-btn-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+
+  .ul-forgot-pwd {
+    font-size: 13px;
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    margin: 0;
+    font-weight: 500;
+
+    i {
+      font-size: 16px;
+      vertical-align: middle;
+      width: 14px;
+      height: 16px;
+      margin-top: -3px;
+      margin-right: 1px;
+    }
+
+    a {
+      color: $primary-dark;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+  }
 }
 
+#user-login-signup-wrapper {
+  .user-login-wrapper {
+    width: 100%;
+    gap: 2em;
+  }
+}
+
+// Global UI Button
+.ul-btn {
+  background-color: $primary-dark;
+  color: white;
+  border: none;
+  border-radius: 25px; /* Pill shape */
+  padding: 12px 35px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: inherit;
+
+  &:hover {
+    background-color: $btn-hover;
+  }
+}
 
 /* ========================================================
    Postcode delivery lookup

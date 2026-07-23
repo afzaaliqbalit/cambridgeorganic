@@ -20,6 +20,7 @@ class Products extends ApiClient
     {
         $response = $this->request('GET', '/gethyperproducts');
 
+
         if (
             !empty($response['success']) &&
             isset($response['data'])
@@ -44,7 +45,10 @@ class Products extends ApiClient
             return $response['data'];
         }
 
-        return null;
+        return [
+            'success' => false,
+            'message' => $response['message']
+        ];
     }
 
     public function searchProduct($term)
