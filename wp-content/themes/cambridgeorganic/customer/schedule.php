@@ -3,6 +3,11 @@
     <div id="customer-profile" class="container page-wrap">
         <?php echo get_template_part('customer/inc/header') ?>
 
+        <?php
+            $user = new User();
+            $orders = $user->getCustomerOrders();
+        ?>
+
         <div id="profile-schedule" class="body-content">
 
             <div class="head-text">
@@ -11,41 +16,17 @@
             </div>
 
             <div class="owl-carousel schedule-scroller camb-woo-products-slider">
-                <div class="item">
-                    <div class="inline-datepicker-wrap">
-                        <input type="hidden" name="selectedDates" onchange="edit_delivery_schedule()">
-                    </div>
-                </div>
 
-                <div class="item">
-                    <div class="inline-datepicker-wrap">
-                        <input type="hidden" name="selectedDates" onchange="edit_delivery_schedule()">
+                <?php
+                    foreach($orders as $order) {
+                        $delivery_date = $order['delivery_date'];
+                ?>
+                    <div class="item">
+                        <div class="inline-datepicker-wrap">
+                            <input type="hidden" name="selectedDates" data-defaultDate="<?php echo $delivery_date ?>" data-from="<?php echo $delivery_date ?>" data-to="<?php echo $delivery_date ?>" onchange="edit_delivery_schedule()">
+                        </div>
                     </div>
-                </div>
-
-                <div class="item">
-                    <div class="inline-datepicker-wrap">
-                        <input type="hidden" name="selectedDates" onchange="edit_delivery_schedule()">
-                    </div>
-                </div>
-
-                <div class="item">
-                    <div class="inline-datepicker-wrap">
-                        <input type="hidden" name="selectedDates" onchange="edit_delivery_schedule()">
-                    </div>
-                </div>
-
-                <div class="item">
-                    <div class="inline-datepicker-wrap">
-                        <input type="hidden" name="selectedDates" onchange="edit_delivery_schedule()">
-                    </div>
-                </div>
-
-                <div class="item">
-                    <div class="inline-datepicker-wrap">
-                        <input type="hidden" name="selectedDates" onchange="edit_delivery_schedule()">
-                    </div>
-                </div>
+                <?php } ?>
             </div>
 
             <div class="pt-3">

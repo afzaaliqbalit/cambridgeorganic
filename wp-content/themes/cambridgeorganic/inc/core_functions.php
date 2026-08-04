@@ -112,7 +112,7 @@ add_action('wp_head', function () {
     <script>
         window.theme_url = '<?php echo esc_js(get_stylesheet_directory_uri()); ?>/';
         window.site_url = '<?php echo site_url(); ?>/';
-        window.is_login = <?php echo is_login() ? 1 : 0; ?>;
+        window.is_login = <?php echo is_user() ? 1 : 0; ?>;
     </script>
     <?php
 });
@@ -164,6 +164,30 @@ function weekDays() {
         'Saturday',
         'Sunday',
     ];
+}
+
+function month_names($month_id = 0)
+{
+    $months = [
+        1  => 'January',
+        2  => 'February',
+        3  => 'March',
+        4  => 'April',
+        5  => 'May',
+        6  => 'June',
+        7  => 'July',
+        8  => 'August',
+        9  => 'September',
+        10 => 'October',
+        11 => 'November',
+        12 => 'December',
+    ];
+
+    if (intval($month_id) > 0) {
+        return $months[intval($month_id)] ?? null;
+    }
+
+    return $months;
 }
 
 function price($price=0) {

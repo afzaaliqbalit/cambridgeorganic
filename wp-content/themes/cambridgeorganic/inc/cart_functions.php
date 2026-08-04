@@ -4,28 +4,41 @@ $_GLOBALS['cart'] = new Cart();
 function endpoint_cart_actions($action=''): void
 {
     $cart = new Cart();
+    $product = new Products();
 
     $params = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
     if (empty($params)) {
         $params = json_decode(file_get_contents('php://input'), true);
     }
 
+    $pid = $params['product_id'] ?? 0;
+    $pqty = !empty($params['qty']) ? intval($params['qty']) : 0;
+    $res = [];
     switch ($action) {
+        case 'product_info':
+            $product_info = $product->getProduct($pid);
+            $res = ['success'=>1, 'product_info'=>$product_info];
+            break;
+        case 'getproducts':
+            $product_info = $product->getProducts();
+            $res = ['success'=>1, 'product_info'=>$product_info];
+            break;
         case 'add':
-            $item_id = intval($params['product_id']);
-            $quantity = intval($params['qty']);
+            $item_id = intval($pid);
 
             $cart->addProduct($item_id, [
-                'cart_quantity' => $quantity
+                'cart_quantity' => $pqty
             ]);
+            $res = ['success'=>1, 'message'=>'Item added to cart'];
         break;
         case 'remove':
-            $item_id = intval($params['product_id']);
+            $item_id = intval($pid);
             $cart->deleteItem($item_id);
+            $res = ['success'=>1, 'message'=>'Item removed from cart'];
         break;
     }
 
-    echo json_encode(['success'=>1, 'message'=>'Item added to cart']);
+    echo json_encode($res);
     exit;
 }
 

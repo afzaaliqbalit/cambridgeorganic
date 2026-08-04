@@ -66,6 +66,30 @@ $transition-speed: 0.2s ease;
       font-size: 28px;
     }
   }
+
+  .swal2-title {
+    font-size: 24px !important;
+  }
+  button.swal2-styled {
+    font-size: 16px;
+    padding: 6px 28px;
+    border-radius: 100px;
+    color: var(--primary-green);
+    border-color: var(--primary-green);
+
+    &.swal2-confirm {
+      background-color: var(--primary-green);
+      color: #fff;
+    }
+    &:hover {
+      background-color: #fff;
+      color: var(--primary-green);
+      border-color: var(--primary-green);
+    }
+  }
+  .swal2-actions {
+    flex-direction: row-reverse;
+  }
 }
 div:where(.swal2-container) div:where(.swal2-html-container) {
   font-size: 16px;

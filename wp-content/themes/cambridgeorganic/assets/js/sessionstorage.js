@@ -277,6 +277,9 @@ const php_session = {
      * @param {*} value
      */
     set(key, value) {
+        if(key === 'api_token') {
+            return;
+        }
         return this.request('set', {
             key,
             value: JSON.stringify(value)
@@ -289,6 +292,9 @@ const php_session = {
      * @param {*} defaultValue
      */
     async get(key, defaultValue = null) {
+        if(key === 'api_token') {
+            return;
+        }
         const value = await this.request('get', { key });
 
         return value === null ? defaultValue : value;
@@ -300,6 +306,9 @@ const php_session = {
      * @param {object|function} updates
      */
     async update(key, updates) {
+        if(key === 'api_token') {
+            return;
+        }
         const current = await this.get(key, {});
 
         const newValue = typeof updates === 'function'

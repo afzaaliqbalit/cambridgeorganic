@@ -1,35 +1,8 @@
-<style>
-    /* Direct Debit Mandate Card Styling */
-    .mandate-card {
-        background-color: var(--gray);
-        border: 1px solid #e1e6e3;
-        border-radius: 12px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-    }
-
-    .mandate-card-title {
-        font-size: 1.35rem;
-        font-weight: 700;
-        margin-bottom: 1.5rem;
-    }
-
-    .mandate-section-header {
-        font-size: 1rem;
-        font-weight: 700;
-        color: #2D3D36;
-        margin-bottom: 0.75rem;
-    }
-
-    .mandate-text {
-        font-size: 0.9rem;
-        line-height: 1.6;
-        color: #3d4f46;
-    }
-</style>
 
 <?php
     $post = !empty( $_POST ) ? $_POST : null;
+    $cart = new Cart();
+    $cart_data = $cart->getCart();
 ?>
 
 <!-- MAIN FORM WRAPPER (Can be formatted/printed) -->
@@ -43,14 +16,9 @@
             <div class="row g-4">
                 <!-- Col 1: Company Address -->
                 <div class="col-12 col-md-4 mandate-col-divider">
-                    <h4 class="mandate-section-header">Delivery Address</h4>
+                    <h4 class="mandate-section-header">Full Name</h4>
                     <div class="mandate-text">
-                        <div class="editable-field" data-field="company_name"><?php echo $post['house_number'] ?? '' ?></div>
-                        <div class="editable-field" data-field="address_1"><?php echo $post['address_line1'] ?? '' ?></div>
-                        <div class="editable-field" data-field="address_2"><?php echo $post['address_line2'] ?? '' ?></div>
-                        <div class="editable-field" data-field="postcode"><?php echo $post['postcode'] ?? '' ?></div>
-                        <div class="editable-field mt-2" data-field="phone"><?php echo $post['phone'] ?? '' ?></div>
-                        <div class="editable-field" data-field="email"><?php echo $post['email'] ?? '' ?></div>
+                        <div class="editable-field" data-field="full_name"><?php echo $post['title'] ?? '' ?> <?php echo $post['firstname'] ?? '' ?> <?php echo $post['lastname'] ?? '' ?></div>
                     </div>
                 </div>
 
@@ -58,58 +26,84 @@
                 <div class="col-12 col-md-4 mandate-col-divider mandate-col-spacing">
                     <h4 class="mandate-section-header">Contact Details</h4>
                     <div class="mandate-text">
-                        <div class="editable-field" data-field="contact_title_name"><?php echo $post['firstname'] ?? '' ?> <?php echo $post['lastname'] ?? '' ?></div>
-                        <div class="editable-field" data-field="contact_address_1"><?php echo $post['address_line1'] ?? '' ?> <?php echo $post['address_line2'] ?? '' ?></div>
-                        <div class="editable-field" data-field="contact_postcode"><?php echo $post['postcode'] ?? '' ?></div>
-                    </div>
-                </div>
-
-                <!-- Col 3: Name of Account Holder -->
-                <div class="col-12 col-md-4 mandate-col-spacing">
-                    <h4 class="mandate-section-header">Name of Account Holder</h4>
-                    <div class="mandate-text">
-                        <div class="editable-field font-monospace fw-semibold" data-field="account_holder_name"><?php echo $post['payment_account_name'] ?? '' ?></div>
+                        <div class="editable-field" data-field="contact_telephone"><?php echo $post['telephone'] ?? '' ?></div>
+                        <div class="editable-field" data-field="contact_secondary_telephone"><?php echo $post['secondary_telephone'] ?? '' ?></div>
+                        <div class="editable-field" data-field="contact_email"><?php echo $post['email'] ?? '' ?></div>
+                        <div class="editable-field" data-field="contact_email"><?php echo $post['secondary_email'] ?? '' ?></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- SECTION 2: BANKING DETAILS 1 -->
+        <div class="row">
+            <div class="col-12 col-md-6 mandate-col-divider">
+                <!-- SECTION 2: BANKING DETAILS 1 -->
+                <div class="mandate-card">
+                    <h3 class="mandate-card-title">Delivery Details</h3>
+
+                    <div class="row g-4">
+                        <!-- Col 1: Bank / Building Society -->
+                        <div class="col-12 col-md-6 mandate-col-divider">
+                            <h4 class="mandate-section-header">Address</h4>
+                            <div class="mandate-text">
+                                <div class="editable-field" data-field="contact_address"><?php echo $post['address_line_1'] ?? '' ?> <?php echo $post['address_line_2'] ?? '' ?></div>
+                                <div class="editable-field" data-field="contact_city"><?php echo $post['city'] ?? '' ?></div>
+                                <div class="editable-field" data-field="contact_postcode"><?php echo $post['postcode'] ?? '' ?></div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 mandate-col-divider">
+                            <h4 class="mandate-section-header">Route Information</h4>
+                            <div class="mandate-text">
+                                <div class="editable-field"><?php echo $cart_data['RouteName'] ?? '' ?></div>
+                                <div class="editable-field">Delivery day: <?php echo $cart_data['routeDay'] ?? '' ?></div>
+                                <div class="editable-field">Next delivery date: <?php echo !empty($cart_data['next_delivery_date']) ? date('d/m/Y',strtotime($cart_data['next_delivery_date'])) : '' ?></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 mandate-col-divider">
+                <div class="mandate-card">
+                    <h3 class="mandate-card-title">Billing Details</h3>
+
+                    <div class="row g-4">
+                        <!-- Col 1: Bank / Building Society -->
+                        <div class="col-12 col-md-6 mandate-col-divider">
+                            <h4 class="mandate-section-header">Address</h4>
+                            <div class="mandate-text">
+                                <div class="editable-field" data-field="contact_address"><?php echo $post['address_line_1'] ?? '' ?> <?php echo $post['address_line_2'] ?? '' ?></div>
+                                <div class="editable-field" data-field="contact_city"><?php echo $post['city'] ?? '' ?></div>
+                                <div class="editable-field" data-field="contact_postcode"><?php echo $post['postcode'] ?? '' ?></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="mandate-card">
-            <h3 class="mandate-card-title">Banking Details</h3>
+            <h3 class="mandate-card-title">Payment Details</h3>
 
             <div class="row g-4">
-                <!-- Col 1: Bank / Building Society -->
                 <div class="col-12 col-md-4 mandate-col-divider">
-                    <h4 class="mandate-section-header">Bank / Building Society</h4>
+                    <h4 class="mandate-section-header">Payment Method</h4>
                     <div class="mandate-text">
-                        <div class="editable-field" data-field="bank_name"><?php echo $post['payment_address_1'] ?? '' ?> <?php echo $post['payment_address_2'] ?? '' ?></div>
+                        <?php echo $post['PaymentMethod'] ?? '-' ?>
                     </div>
                 </div>
 
-                <!-- Col 2: Name on Statement -->
-                <div class="col-12 col-md-4 mandate-col-divider mandate-col-spacing">
-                    <h4 class="mandate-section-header">Name on Statement</h4>
+                <div class="col-12 col-md-4 mandate-col-divider">
+                    <h4 class="mandate-section-header">Preferred Communication</h4>
                     <div class="mandate-text">
-                        <div class="editable-field font-monospace" data-field="statement_name"><?php echo $post['payment_contact_name'] ?></div>
+                        <?php echo $post['preferredCommunication'] ?? '-' ?>
                     </div>
                 </div>
 
-                <!-- Col 3: Bank Account & Sort Code -->
-                <div class="col-12 col-md-4 mandate-col-spacing">
-                    <!-- Row block inside column -->
-                    <div class="mb-4">
-                        <h4 class="mandate-section-header">Bank Account Number</h4>
-                        <div class="mandate-text">
-                            <div class="editable-field font-monospace" data-field="account_number"><?php echo $post['payment_account_number'] ?></div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h4 class="mandate-section-header">Sort Code</h4>
-                        <div class="mandate-text">
-                            <div class="editable-field font-monospace" data-field="sort_code"><?php echo $post['payment_sort_code'] ?></div>
-                        </div>
+                <div class="col-12 col-md-4 mandate-col-divider">
+                    <h4 class="mandate-section-header">Notes</h4>
+                    <div class="mandate-text">
+                        <?php echo $post['notes'] ?? '-' ?>
                     </div>
                 </div>
             </div>

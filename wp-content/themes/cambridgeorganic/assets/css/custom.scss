@@ -126,6 +126,9 @@ $border-light: #d1d5db;
 }
 
 .nav-secondary-menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   .menu-item:not(.active) {
     display: none;
   }
@@ -144,6 +147,13 @@ $border-light: #d1d5db;
         background-color: #ebebeb;
       }
     }
+  }
+  .logout-btn {
+    color: var(--primary-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
   }
 }
 
@@ -894,12 +904,20 @@ $border-light: #d1d5db;
     }
   }
 
+  a.caption-link {
+    font-size: 12px;
+    margin-top: 6px;
+    display: inline-block;
+  }
+
   .input-group {
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
+
+
 }
 
 .error_message {
@@ -956,6 +974,16 @@ $border-light: #d1d5db;
     border: 1px solid var(--primary-green);
     color: var(--primary-green);
   }
+}
+
+.icon-logout {
+  width: 22px;
+  height: 22px;
+  display: inline-block;
+  mask-image: url(../images/icon-logout.svg);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-color: var(--primary-green);
 }
 
 .content-box {
@@ -1217,5 +1245,37 @@ input[type=password] {
       }
     }
   }
+  a.caption-link {
+    font-size: 12px;
+    margin-top: 6px;
+    display: inline-block;
+    color: var(--green);
+  }
 }
 
+.mandate-card {
+  background-color: var(--gray);
+  border: 1px solid #e1e6e3;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.mandate-card-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.mandate-section-header {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2D3D36;
+  margin-bottom: 0.75rem;
+}
+
+.mandate-text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #3d4f46;
+}

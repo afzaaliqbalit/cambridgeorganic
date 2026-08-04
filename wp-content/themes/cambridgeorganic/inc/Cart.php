@@ -23,7 +23,9 @@ class Cart
      */
     public function getCart()
     {
-        return get_session($this->sessionKey) ?? [];
+
+        $session = get_session($this->sessionKey) ?? [];
+        return $session;
     }
 
     /**
@@ -133,13 +135,21 @@ class Cart
         if(empty($fetchInfo['id'])) {
             $cart = $this->getCart();
             $route_id = $cart['delivery_route'];
+        }else {
+            $route_id = $fetchInfo['id'];
+        }
 
-            if(!empty($fetchInfo['reload']) || empty($_SESSION['delivery_route_info'][$route_id])) {
-                $apiClient = new APIClient();
-                $fetchRec = $apiClient->request('GET', '/getRouteInfo/'.$route_id);
-                $fetchInfo = $fetchRec['data'];
-                $_SESSION['delivery_route_info'][$route_id] = $fetchInfo;
+        if(!empty($fetchInfo['reload']) || empty($_SESSION['delivery_route_info'][$route_id]['next_delivery_date'])) {
+            $apiClient = new APIClient();
+            $fetchRec = $apiClient->request('GET', '/getRouteInfo/'.$route_id);
+            if(empty($fetchRec['success'])) {
+                return [
+                    'success' => false,
+                    'message' => 'Failed to fetch route information'
+                ];
             }
+            $fetchInfo = $fetchRec['data'];
+            $_SESSION['delivery_route_info'][$route_id] = $fetchInfo;
         }
 
         if(isset($_SESSION['ordle-cart']['routeDay'])) {
@@ -191,13 +201,14 @@ class Cart
 
         if(!empty($_SESSION['ordle-cart']['next_delivery_date'])) {
             $next_delivery_date = $_SESSION['ordle-cart']['next_delivery_date'];
-            $next_delivery_month = date('F', strtotime($next_delivery_date));
+            $next_delivery_month = date('m', strtotime($next_delivery_date));
         }
         if(!empty($_SESSION['ordle-cart']['delivery_route'])) {
             $route_id = $_SESSION['ordle-cart']['delivery_route'];
         }
 
         return [
+            'success' => true,
             'id' => $route_id,
             'routeName' => $routeName,
             'routeDay' => $routeDay,

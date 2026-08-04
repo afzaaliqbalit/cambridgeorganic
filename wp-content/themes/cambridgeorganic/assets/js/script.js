@@ -174,9 +174,11 @@ function nav_switcher() {
     const primaryMenu = document.querySelector('.nav-primary-menu');
     const secondaryMenu = document.querySelector('.nav-secondary-menu');
     const primaryItems = primaryMenu?.querySelectorAll('a[data-id]');
-    const secondaryItems = document.querySelectorAll('.nav-secondary-menu > [id^="menu-"]');
+    const secondaryItems = document.querySelectorAll('.nav-secondary-menu [id^="menu-"]');
 
-    if (!primaryItems.length) return;
+    if (!primaryItems.length) {
+        return
+    };
 
     let revertTimeout = null;
 
@@ -206,6 +208,11 @@ function nav_switcher() {
 
     function cancelRevert() {
         clearTimeout(revertTimeout);
+    }
+
+    if(!document.querySelector('.nav-secondary-menu > [id^="menu-"].active')) {
+        const first_menu_id = document.querySelector('.nav-secondary-menu [id^="menu-"]:first-child').id.replace('menu-','');
+        showSecondary(parseInt(first_menu_id));
     }
 
     primaryItems.forEach(item => {
@@ -471,6 +478,10 @@ function flatpicker_options(input, data) {
         delete options.selected;
     }
 
+    if(options.disable) {
+        options.disable = [options.disable];
+    }
+
     // data-start-from / data-end-to -> defaultDate
     if (options.startFrom || options.endTo) {
         if ((options.mode || '').toLowerCase() === 'range') {
@@ -511,8 +522,6 @@ window.init_inline_datepicker = (data = {}) => {
         const input = wrapper.find('input');
         const options = flatpicker_options(input, data);
 
-        console.log(options);
-
         input.flatpickr({
             appendTo: this,
             inline: true,
@@ -550,7 +559,7 @@ jQuery(document).ready(function ($) {
         margin: 15,
         nav: true,
         dots: false,
-        loop: true,
+        loop: false,
         responsive: {
             0: {
                 items: 1

@@ -3,6 +3,12 @@
     <div id="customer-profile" class="container page-wrap">
         <?php echo get_template_part('customer/inc/header') ?>
 
+        <?php
+        $user = new User();
+        $orders = $user->getCustomerOrders();
+        pr($orders, false);
+        ?>
+
         <div id="profile-orders" class="body-content">
             <section>
                 <div class="head-text">
@@ -37,7 +43,7 @@
 
             <section>
                 <div class="head-text">
-                    <h4>Your Veg Box Subscription</h4>
+                    <h4>Subscriptions</h4>
                 </div>
                 <form class="form">
                     <div class="actions-box">

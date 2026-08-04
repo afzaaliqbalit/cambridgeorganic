@@ -12,7 +12,7 @@ if(empty($_SESSION['ordle-cart']['products']) || empty($_SESSION['ordle-cart']['
 }
 
 if(empty($_SESSION['customer-info']) && !is_user()) {
-    wp_redirect(home_url());
+    wp_redirect('create-account');
 }
 
 $cart = new Cart();
@@ -20,7 +20,20 @@ $api = new APIClient();
 $cart_data = $cart->getCart();
 $cart_products = $cart_data['products'];
 
-$route_info = $cart->getRouteInfo();
+$next_delivery_date = $cart_data['next_delivery_date'];
+$delivery_frequency = !empty($cart_data['delivery_frequency']) ? $cart_data['delivery_frequency'] : 'Weekly';
+$delivery_frequency_name = '';
+switch ($delivery_frequency) {
+    case 'Weekly':
+        $delivery_frequency_name = 'Week';
+        break;
+    case 'Monthly':
+        $delivery_frequency_name = 'Month';
+        break;
+    case 'BiWeekly':
+        $delivery_frequency_name = '2 Weeks';
+        break;
+}
 ?>
 
     <div class="container page-wrap">
@@ -40,7 +53,7 @@ $route_info = $cart->getRouteInfo();
                     <div class="col-md-8 col-12 d-flex align-items-end gap-3 mb-3 mb-md-0">
                         <?php cart_basket_html() ?>
                         <div class="fs-5 fw-semibold mt-1">
-                            Your Shopping Basket for Delivery on <span class="text-accent-red fw-bold" id="delivery-date"><?php echo date('d/m/Y',strtotime($route_info['next_delivery_date'])) ?></span>
+                            Your Shopping Basket for Delivery on <span class="text-accent-red fw-bold" id="delivery-date"><?php echo date('d/m/Y',strtotime($next_delivery_date)) ?></span>
                         </div>
                     </div>
                     <div class="col-md-4 col-12 justify-content-end d-flex gap-3">
@@ -58,6 +71,7 @@ $route_info = $cart->getRouteInfo();
                 <div class="basket-outer-box">
 
             <?php
+
             foreach ($cart_products as $product) {
                 ?>
                     <!-- CARD 1: Customizable Veg Box -->
@@ -78,30 +92,46 @@ $route_info = $cart->getRouteInfo();
                                                     <h4 class="text-primary-green m-0 fw-bold fs-5"><?php echo $product['name'] ?> <?php echo !empty($product['box_size']) ? ' : '.$product['box_size'] : '' ?></h4>
                                                 </div>
                                                 <p class="text-muted mb-2" style="font-size: 0.85rem;">
-                                                    Delivery Option &nbsp;&bull;&nbsp; 1 Vegetable Box Every Week
+                                                    Delivery Option &nbsp;&bull;&nbsp; <?php echo $product['cart_quantity'] ?> <?php echo $product['name'] ?> Every <?php echo $delivery_frequency_name ?>
                                                 </p>
 
-                                                <div class="box-summary-text" style="font-size: 0.85rem;">
-                                                    <div>
-                                                        <span class="fw-semibold">Summary of your Box</span>
-                                                    </div>
-                                                    <div class="text-points">
-                                                        <span class="text-success"><i class="bi icon-check-circle-fill"></i> Points Used</span>
-                                                        <span class="fw-bold">
+                                                <?php
+                                                if($product['type'] !== 'single') {
+                                                ?>
+                                                    <div class="box-summary-text" style="font-size: 0.85rem;">
+                                                        <div>
+                                                            <span class="fw-semibold">Summary of your Box</span>
+                                                        </div>
+                                                        <div class="text-points">
+                                                            <span class="text-success"><i class="bi icon-check-circle-fill"></i> Points Used</span>
+                                                            <span class="fw-bold">
                                                     <span class="text-accent-red">&mdash;&nbsp; 25</span> <span>/ 18</span></span>
+                                                        </div>
                                                     </div>
-                                                </div>
-
                                                 <!-- Inner veg list -->
                                                 <div class="veg-list">
-                                                    <div class="veg-list-row"><span>Carrots 150g</span> <span class="fw-medium">3x</span></div>
-                                                    <div class="veg-list-row"><span>Potatoes (Red Carra) 100g Sack</span> <span class="fw-medium">1x</span></div>
-                                                    <div class="veg-list-row"><span>Parsnips 100g</span> <span class="fw-medium">1x</span></div>
-                                                    <div class="veg-list-row"><span>Cucumbers (x3) 250g</span> <span class="fw-medium">1x</span></div>
-                                                    <div class="veg-list-row"><span>Turmeric Root 60g</span> <span class="fw-medium">1x</span></div>
-                                                    <div class="veg-list-row"><span>Vine Tomatoes 250g</span> <span class="fw-medium">1x</span></div>
-                                                    <div class="veg-list-row"><span>Onions 150g</span> <span class="fw-medium">3x</span></div>
+                                                    <?php
+                                                    $box_items = [];
+                                                    if($product['type'] !== 'single' && !empty($product['hyper_product_type'])) {
+                                                        if($product['hyper_product_type'] === 'choice') {
+                                                            $box_items = $product['selected_items'];
+                                                        }
+                                                        if($product['hyper_product_type'] === 'fixed') {
+                                                            $box_items = $product['associated_products'];
+                                                        }
+                                                        if($product['hyper_product_type'] === 'hybrid') {
+                                                            $box_items = $product['associated_products'];
+                                                        }
+                                                    }
+                                                    foreach($box_items as $a_product) {
+                                                        $weight = !empty($a_product['option_weight']) ? $a_product['option_weight'] : $a_product['weight'].' '.$a_product['per_unit'];
+                                                    ?>
+                                                    <div class="veg-list-row"><span><?php echo $a_product['name'] ?> <?php echo $weight ?></span> <?php if(!empty($a_product['quantity'])) { ?> <span class="fw-medium"><?php echo $a_product['quantity'] ?>x</span> <?php } ?></div>
+                                                    <?php }
+                                                    ?>
                                                 </div>
+                                                <?php } ?>
+
                                             </div>
 
                                             <div class="col-lg-5 col-md-6 col-12">
@@ -246,13 +276,18 @@ $route_info = $cart->getRouteInfo();
                     checkout_wrapper.classList.add('loading');
                     <?php
                    if(!is_user()) {
-                        $data = $_SESSION['customer-info'];
+                       $data = $_SESSION['customer-info'];
 
                        $title = $data['title'] ?? '';
                        $firstname = $data['firstname'] ?? '';
                        $lastname = $data['lastname'] ?? '';
                        $email = $data['email'] ?? '';
-                       $phone = $data['phone'] ?? '';
+                       $secondary_email = $data['secondary_email'] ?? '';
+
+                       $phone = $data['telephone'] ?? '';
+                       $secondary_phone = $data['secondary_telephone'] ?? '';
+                       $mobile = $data['mobile'] ?? '';
+
                        $password = $data['password'] ?? '';
                        $confirm_password = $data['confirm_password'] ?? '';
 
@@ -263,27 +298,24 @@ $route_info = $cart->getRouteInfo();
                        $city = $data['city'] ?? '';
                        $postcode = $data['postcode'] ?? '';
                        $gps = $data['gps'] ?? '';
-                       $what_three_words = $data['what_three_words'] ?? '';
+                       $what_three_words = $data['ww3_location'] ?? '';
 
-                       $payment_contact_name = $data['payment_contact_name'] ?? '';
-                       $payment_address_1 = $data['payment_address_1'] ?? '';
-                       $payment_address_2 = $data['payment_address_2'] ?? '';
-                       $payment_city = $data['payment_city'] ?? '';
-                       $payment_postcode = $data['payment_postcode'] ?? '';
-                       $payment_email_address = $data['payment_email_address'] ?? '';
-                       $payment_telephone = $data['payment_telephone'] ?? '';
-                       $payment_account_name = $data['payment_account_name'] ?? '';
-                       $payment_sort_code = $data['payment_sort_code'] ?? '';
-                       $payment_account_number = $data['payment_account_number'] ?? '';
+                       $billing_house_number = $data['billing_house_number'] ?? '';
+                       $billing_house_name = $data['billing_house_name'] ?? '';
+                       $billing_address_line_1 = $data['billing_address_line_1'] ?? '';
+                       $billing_address_line_2 = $data['billing_address_line_2'] ?? '';
+                       $billing_city = $data['billing_city'] ?? '';
+                       $billing_postcode = $data['billing_postcode'] ?? '';
+                       $billing_gps = $data['billing_gps'] ?? '';
 
                        $route_id = $data['route_id'] ?? '';
                        $account_reference = $data['account_reference'] ?? '';
-                       $payment_method = $data['payment_method'] ?? '';
-                       $preferred_communication = $data['preferred_communication'] ?? '';
+
+                       $payment_method = $data['PaymentMethod'] ?? '';
+                       $preferred_communication = $data['preferredCommunication'] ?? '';
                        $notes = $data['notes'] ?? '';
 
-                       $confirm_create_account = $data['confirm_create_account'] ?? 0;
-                       $create_account = $data['create_account'] ?? 0;
+                       $confirm_create_account = !empty($data['terms_conditions']) ? 1 : 0;
 
                        $apiData = [
                            'Password' => $password,
@@ -295,25 +327,33 @@ $route_info = $cart->getRouteInfo();
                            'Tel' => $phone,
                            'TelSecondary' => $secondary_phone,
                            'Mobile' => $mobile,
+
                            'PaymentMethod' => $payment_method,
                            'PreferedCommunication' => $preferred_communication,
                            'Notes' => $notes,
+
                            'accountreference' => $account_reference,
                            'route' => $route_id,
+
                            'housenumber' => $house_number,
                            'housename' => $house_name,
                            'streetname' => $address_line_1,
+                           'streetname2' => $address_line_2,
                            'cityname' => $city,
                            'postcode' => $postcode,
                            'gps' => $gps,
                            'what_three_words' => $what_three_words,
-                           'billing_housenumber' => $payment_house_number,
-                           'billing_housename' => $payment_house_name,
-                           'billing_streetname' => $payment_address_1,
-                           'billing_cityname' => $payment_city,
-                           'billing_postcode' => $payment_postcode,
-                           'billing_gps' => $payment_gps,
+
+                           'billing_housenumber' => $billing_house_number,
+                           'billing_housename' => $billing_house_name,
+                           'billing_streetname' => $billing_address_line_1,
+                           'billing_streetname2' => $billing_address_line_2,
+                           'billing_cityname' => $billing_city,
+                           'billing_postcode' => $billing_postcode,
+                           'billing_gps' => $billing_gps,
                        ];
+
+                       //print_r($apiData);
 
 
                    }else {
@@ -323,7 +363,6 @@ $route_info = $cart->getRouteInfo();
                      }
                    ?>
 
-// Example functions to handle the custom button clicks
                    function handleSignOut() {
                        console.log("Signing out...");
                        Swal.close();

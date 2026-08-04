@@ -92,7 +92,7 @@ add_shortcode('cambi_primary_menu_nav', 'primary_menu');
 
 function child_menu_nav() {
     $grouped_items = get_menu_nav();
-    $menu_html = '<div class="nav-secondary-menu">';
+    $menu_html = '<div class="nav-secondary-menu"><div>';
 
     foreach ($grouped_items as $item) {
         $is_active = $item['is_active_parent'] ? 'active' : '';
@@ -109,6 +109,12 @@ function child_menu_nav() {
             }
             $menu_html .= '</div></div>';
         }
+    }
+
+    $menu_html .= '</div>';
+
+    if(is_user()) {
+        $menu_html .= '<div><a class="logout-btn" href="'.site_url('customer/logout').'"><i class="icon-logout"></i> Logout</a> </div>';
     }
 
     $menu_html .= '</div>';
@@ -200,12 +206,18 @@ function cart_basket_html() {
 function camb_postcode_search_form() {
     ob_start();
     ?>
+    <div class="panel-wrapper">
     <form id="validate-guest-postcode-form" class="validate w-100 prevent-enter">
-        <div class="form-group">
-            <input type="text" class="ul-input-postcode guest-signup-postcode" placeholder="Enter your postcode (e.g. CB2 1FD)" required data-error="Your postcode is required.">
+        <div class="d-flex flex-column gap-3">
+            <div class="form-group">
+                <input type="text" class="ul-input-postcode guest-signup-postcode" placeholder="Enter your postcode (e.g. CB2 1FD)" required data-error="Your postcode is required.">
+            </div>
+            <div class="text-center">
+                <button type="button" class="ul-btn button btn-primary" onclick="guest_postcode_delivery_modal(this)">Enter Postcode</button>
+            </div>
         </div>
-        <button type="button" class="ul-btn button btn-primary" onclick="guest_postcode_delivery_modal(this)">Enter Postcode</button>
     </form>
+    </div>
     <?php
     return ob_get_clean();
 }

@@ -241,6 +241,11 @@
                 routeID = 0;
             }
 
+            if(!delivery_info.success) {
+                alert(delivery_info.message);
+                return;
+            }
+
             Swal.fire({
                 customClass: {
                     popup: 'postcode-delivery-lookup'
@@ -252,17 +257,15 @@
                 willOpen: ()=>{
                     try {
                        if(data.success) {
-                           SessionStorage.set('user_signup_form', {
-                               ...delivery_info,
-                               postcode: postcode_value,
-                               delivery_route: routeID,
-                           });
-
-                           php_session.update('ordle-cart', {
+                           const del_info = {
                                ...delivery_info,
                                postcode: postcode_value,
                                delivery_route: routeID
-                           });
+                           };
+
+                           SessionStorage.set('user_signup_form', del_info);
+
+                           php_session.update('ordle-cart', del_info);
 
                            if(signup_step) {
                                myFormConfig.initialStepIndex = signup_step;
@@ -270,7 +273,7 @@
                                myFormConfig.initialStepIndex = 0;
                            }
                            setTimeout(()=>{
-                               const engine = new StepFormEngine(myFormConfig);
+                               new StepFormEngine(myFormConfig);
                            },500);
                        }
                     } catch (error) {
@@ -284,8 +287,8 @@
     window.init_signup_box_selection = ()=>{
         const signup_session = SessionStorage.get('user_signup_form');
 
-        if(signup_session && document.querySelector('.product-hyper-box')) {
-            const postcode_value = signup_session.postcode;
+        if(signup_session && document.querySelector('.product-hyper-box') || is_login) {
+           // const postcode_value = signup_session.postcode;
 
             document.querySelectorAll('.product-box-wrapper').forEach((box)=>{
                 const footer = box.querySelector('.box-footer');
@@ -294,23 +297,61 @@
                 footer.querySelector('.btn').classList.add('guest_add_to_cart');
                 footer.querySelector('.btn').setAttribute('data-pid',pid);
 
-                const slug = footer.querySelector('.btn').dataset.slug;
+                const p_choicebox = footer.querySelector('.btn').dataset.choicebox;
+                //const slug = footer.querySelector('.btn').dataset.slug;
                 const price = footer.querySelector('.btn').dataset.price;
 
                 footer.querySelector('.btn').addEventListener('click', ()=>{
                     box.classList.add('loading');
+
+                    <?php
+                    if(!is_user()) {
+                        ?>
                     php_session.update('ordle-cart', {
                         products: {}
                     }).then(()=>{
                         document.querySelector('#shop-category-archieve').classList.add('loading');
-                        add_to_cart(pid, price, 1).then(()=>{
-                            reloadCart().then(function() {
-                                box.classList.remove('loading');
+                        if(p_choicebox === "choice") {
+                            build_order_selector({
+                                product_id: pid,
+                                onOpen: ()=>{
+                                    box.classList.remove('loading');
+                                }
                             });
-                            document.querySelector('#shop-category-archieve').classList.remove('loading');
-                            location.href = 'create-account';
-                        });
+                        }else {
+                            add_to_cart(pid, price, 1).then(()=>{
+                                reloadCart().then(function() {
+                                    box.classList.remove('loading');
+                                });
+                                document.querySelector('#shop-category-archieve').classList.remove('loading');
+                                location.href = 'create-account';
+                            });
+                        }
                     });
+                        <?php
+                    }else {
+                        ?>
+                        document.querySelector('#shop-category-archieve').classList.add('loading');
+
+                        if(p_choicebox === "choice") {
+                            build_order_selector({
+                                product_id: pid,
+                                onOpen: ()=>{
+                                    box.classList.remove('loading');
+                                }
+                            });
+                        }else {
+                            add_to_cart(pid, price, 1).then(()=>{
+                                reloadCart().then(function() {
+                                    box.classList.remove('loading');
+                                });
+                                document.querySelector('#shop-category-archieve').classList.remove('loading');
+                                location.href = 'create-account';
+                            });
+                        }
+                    <?php
+                    }
+                    ?>
 
                     // get_remote_request('getproduct', {
                     //     product_slug: slug

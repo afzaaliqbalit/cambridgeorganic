@@ -17,48 +17,6 @@ $routeID = !empty($data['id']) ? $data['id'] : 0;
         $next_delivery_day_num = $routeInfo['next_delivery_day_num'];
         $next_delivery_month = $routeInfo['next_delivery_month'];
 
-//            if ($diff < $minDiff) {
-//                $minDiff = $diff;
-//                $next_delivery_day = $day;
-//
-//                // Calculate actual next delivery date
-//                $nextDate = clone $today;
-//                if ($diff > 0) {
-//                    $nextDate->modify("+{$diff} days");
-//                }
-//
-//                $next_delivery_date = $nextDate->format('Y-m-d');
-//                $next_delivery_day_num = $nextDate->format('d');
-//                $next_delivery_month = $nextDate->format('m');
-//            }
-
-//            foreach ($delivery_days as $day) {
-//                $dayIndex = array_search($day, $weekDays, true);
-//
-//                if ($dayIndex === false) {
-//                    continue;
-//                }
-//
-//                $dayNumber = $dayIndex + 1;
-//                $diff = ($dayNumber - $curr_day + 7) % 7;
-//                $diff = $diff + 7;
-//
-//                if ($diff < $minDiff) {
-//                    $minDiff = $diff;
-//                    $next_delivery_day = $day;
-//
-//                    // Calculate actual next delivery date
-//                    $nextDate = clone $today;
-//                    if ($diff > 0) {
-//                        $nextDate->modify("+{$diff} days");
-//                    }
-//
-//                    $next_delivery_date = $nextDate->format('Y-m-d');
-//                    $next_delivery_day_num = $nextDate->format('d');
-//                    $next_delivery_month = $nextDate->format('m');
-//                }
-//            }
-        //}
 ?>
         <div id="processing-signup-form" class="processing"></div>
 <form id="signup-steps-form" action="" method="post">
@@ -74,7 +32,7 @@ $routeID = !empty($data['id']) ? $data['id'] : 0;
                 <h2 class="text-heading"><?php echo $next_delivery_day ?></h2>
 
                 <p class="small text-brand-muted fw-semibold lh-base px-2">
-                    The next time we can deliver to you is on <strong class="text-brand-dark next-delivery-placeholder"><?php echo $next_delivery_day_num ?> / <?php echo $next_delivery_month ?></strong>.
+                    The next time we can deliver to you is on <strong class="text-brand-dark next-delivery-placeholder"><?php echo $next_delivery_day_num ?> / <?php echo month_names($next_delivery_month) ?></strong>.
                 </p>
 
                 <?php /*<div class="small text-brand-muted fw-semibold lh-base px-2">

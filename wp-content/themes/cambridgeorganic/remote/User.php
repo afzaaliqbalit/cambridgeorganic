@@ -58,16 +58,24 @@ class User extends ApiClient
             'postcode' => $postcode
         ]);
 
-        $routeDay = !empty($response['data'][0]['RouteDay']) ? $response['data'][0]['RouteDay'] : '';
+        $routeID = !empty($response['data'][0]['id']) ? $response['data'][0]['id'] : '';
 
-        if($routeDay) {
+        if($routeID) {
             $cart = new Cart();
-            $routeInfo = $cart->getRouteInfo(['RouteDay' => $routeDay]);
+            $routeInfo = $cart->getRouteInfo(['id' => $routeID]);
 
             $_SESSION['postcode_info'] = $routeInfo;
             $response['routeInfo'] = $routeInfo;
         }
 
         return $response;
+    }
+
+    function getCustomerOrders() {
+        $response = $this->request('GET', '/customers/orders', []);
+        if(!empty($response['success'])) {
+            return $response['data'];
+        }
+        return [];
     }
 }

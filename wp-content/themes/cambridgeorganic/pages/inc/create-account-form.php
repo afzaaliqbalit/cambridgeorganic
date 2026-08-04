@@ -1,5 +1,8 @@
 <div class="create-account">
-
+    <?php
+        $cart = new Cart();
+        $data = $cart->getCart();
+    ?>
     <div style="max-width: 820px">
         <!-- Profile Section -->
         <div class="form-body inline-labels">
@@ -141,7 +144,10 @@
             <div class="form-group">
                 <label>Postcode <span>*</span></label>
                 <div class="w-100">
-                    <input type="text" placeholder="" name="postcode" class="form-control" required>
+                    <div>
+                        <input type="text" placeholder="" name="postcode" class="form-control" value="<?php echo !empty($data['postcode']) ? $data['postcode'] : '' ?>" readonly required>
+                    </div>
+                    <a href="#" onclick="user_login_modal(); return false;" class="caption-link">Change Postcode?</a>
                 </div>
             </div>
 
@@ -199,7 +205,52 @@
             <div class="form-group">
                 <label>Postcode: <span>*</span></label>
                 <div class="w-100">
-                    <input type="text" placeholder="" name="billing_postcode" class="form-control" value="CB1 1" required>
+                    <div>
+                        <input type="text" placeholder="" name="billing_postcode" class="form-control" value="<?php echo !empty($data['postcode']) ? $data['postcode'] : '' ?>" readonly required>
+                    </div>
+                    <a href="#" onclick="user_login_modal(); return false;" class="caption-link">Change Postcode?</a>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="form-body inline-labels mb-5">
+            <div class="form-head mt-4">
+                <h3 class="d-flex align-items-center gap-3">
+                    <i class="icon-truck" style="width: 40px;height: 40px; background-color: var(--red)"></i> Payment Details
+                </h3>
+            </div>
+
+            <!-- House # -->
+            <div class="form-group">
+                <label>Payment Method:</label>
+                <div class="w-100">
+                    <select name="PaymentMethod" class="form-control">
+                        <option value="" selected="">Select</option>
+                        <option value="Education">Education</option>
+                        <option value="Utilities">Utilities</option>
+                        <option value="Telecommunications">Telecommunications</option>
+                        <option value="Tax Payments">Tax Payments</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Preferred Communication:</label>
+                <div class="w-100">
+                    <select class="form-control" name="preferredCommunication" required>
+                        <option value="Email" selected="">Email</option>
+                        <option value="Telephone">Telephone</option>
+                        <option value="Printed Literature">Printed Literature</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Notes:</label>
+                <div class="w-100">
+                    <textarea placeholder="" name="notes" class="form-control" rows="3"></textarea>
                 </div>
             </div>
 

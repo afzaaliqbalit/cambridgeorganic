@@ -1,24 +1,35 @@
+function init_add_to_cart(data={}) {
+    return fetch(`${site_url}cart_action/add`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+}
+
 window.add_to_cart = async (product_id, product_price, qty = 1, attrs = {}) => {
     try {
-        const response = await fetch(`${site_url}cart_action/add`, {
+        const product_info = await fetch(`${site_url}cart_action/product_info`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             },
             body: JSON.stringify({
+                product_id
+            })
+        }).then(res=>res.json()).then(data=>{
+            init_add_to_cart({
                 product_id,
                 qty,
                 attrs,
                 product_price
-            })
+            });
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-
-        return await response.json();
+        return await product_info;
     } catch (error) {
         console.error("Add to cart failed:", error);
         throw error;
@@ -33,7 +44,8 @@ window.removeCartItem = async (product_id) => {
         title: 'Are you sure you want to remove this item?',
         showCancelButton: true,
         cancelButtonText: 'Cancel',
-        confirmButtonText: 'Yes'
+        confirmButtonText: 'Yes',
+        width: 550
     });
 
     if (!result.isConfirmed) {

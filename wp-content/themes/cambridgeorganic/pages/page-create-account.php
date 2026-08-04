@@ -18,6 +18,10 @@ Template Name: Create Account
         wp_redirect(home_url());
         exit;
     }
+    if(is_user()) {
+        wp_redirect(home_url());
+        exit;
+    }
     //action="<?php echo esc_url(admin_url('admin-post.php'));
 ?>
 
