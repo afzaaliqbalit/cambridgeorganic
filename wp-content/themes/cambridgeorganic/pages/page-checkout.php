@@ -6,7 +6,7 @@ Template Name: Checkout
 
 <?php get_header( 'shop' );
 
-if(empty($_SESSION['ordle-cart']['products']) || empty($_SESSION['ordle-cart']['routeDay'])) {
+if(empty($_SESSION['ordle-cart']['products']) || (empty($_SESSION['ordle-cart']['routeDay']) && !is_user())) {
     wp_redirect(home_url());
     exit;
 }
@@ -17,12 +17,29 @@ if(empty($_SESSION['customer-info']) && !is_user()) {
 
 $cart = new Cart();
 $api = new APIClient();
+$user = new User();
 $cart_data = $cart->getCart();
+$next_delivery = $user->nextOrder();
 $cart_products = $cart_data['products'];
 
-$next_delivery_date = $cart_data['next_delivery_date'];
+if(is_user()) {
+    if(empty($cart_data['delivery_frequency'])) {
+        if(!empty($next_delivery['frequencySchedule'])) {
+            $cart_data['delivery_frequency'] = $next_delivery['frequencySchedule'];
+        }
+    }
+    if(empty($cart_data['next_delivery_date'])) {
+        if(!empty($next_delivery['deliveryDates'])) {
+            $cart_data['next_delivery_date'] = $next_delivery['deliveryDates'][0];
+        }
+    }
+}
+
+$next_delivery_date = !empty($cart_data['next_delivery_date']) ? $cart_data['next_delivery_date'] : date('Y-m-d');
 $delivery_frequency = !empty($cart_data['delivery_frequency']) ? $cart_data['delivery_frequency'] : 'Weekly';
+
 $delivery_frequency_name = '';
+
 switch ($delivery_frequency) {
     case 'Weekly':
         $delivery_frequency_name = 'Week';
@@ -57,6 +74,7 @@ switch ($delivery_frequency) {
                         </div>
                     </div>
                     <div class="col-md-4 col-12 justify-content-end d-flex gap-3">
+
                         <button class="btn btn-outline-custom d-flex align-items-center gap-2 w-75 justify-content-center justify-content-md-start" onclick="notifyAction('edit_schedule')">
                             <i class="bi icon-truck"></i> Edit Schedule
                         </button>
@@ -64,6 +82,7 @@ switch ($delivery_frequency) {
                         <button onclick="confirm_order()" class="btn btn-orange text-uppercase shadow-sm d-inline-flex align-items-center gap-2 order-confirm">
                             <i class="icon-basket white"></i> Confirm Order
                         </button>
+
                     </div>
                 </div>
 
@@ -71,8 +90,16 @@ switch ($delivery_frequency) {
                 <div class="basket-outer-box">
 
             <?php
+            $single_products = [];
+            $hyper_products = [];
 
             foreach ($cart_products as $product) {
+                if(!empty($product['item_frequency'])) {
+                    $freq = $product['item_frequency'] == 'always_add' ? 'Always add' : 'Once';
+                    $delivery_frequency_name = $product['cart_quantity'].' '.$product['name'].' '. $freq;
+                }else {
+                    $delivery_frequency_name = $product['cart_quantity'].' '.$product['name'].' Every '.$delivery_frequency_name;
+                }
                 ?>
                     <!-- CARD 1: Customizable Veg Box -->
                     <div class="basket-item-card" id="card-vegbox">
@@ -88,25 +115,26 @@ switch ($delivery_frequency) {
                                             <!-- Product Details -->
                                             <div class="col-lg-7 col-md-9 col-12">
                                                 <div class="d-flex align-items-start gap-2 mb-1">
-                                                    <i class="bi bi-box-seam-fill text-primary-green fs-5"></i>
+                                                    <i class="bi icon-vegebox"></i>
                                                     <h4 class="text-primary-green m-0 fw-bold fs-5"><?php echo $product['name'] ?> <?php echo !empty($product['box_size']) ? ' : '.$product['box_size'] : '' ?></h4>
                                                 </div>
                                                 <p class="text-muted mb-2" style="font-size: 0.85rem;">
-                                                    Delivery Option &nbsp;&bull;&nbsp; <?php echo $product['cart_quantity'] ?> <?php echo $product['name'] ?> Every <?php echo $delivery_frequency_name ?>
+                                                    Delivery Option &nbsp;&bull;&nbsp; <?php echo $delivery_frequency_name ?>
                                                 </p>
 
                                                 <?php
                                                 if($product['type'] !== 'single') {
+                                                    $hyper_products[] = $product;
                                                 ?>
                                                     <div class="box-summary-text" style="font-size: 0.85rem;">
                                                         <div>
                                                             <span class="fw-semibold">Summary of your Box</span>
                                                         </div>
-                                                        <div class="text-points">
-                                                            <span class="text-success"><i class="bi icon-check-circle-fill"></i> Points Used</span>
-                                                            <span class="fw-bold">
-                                                    <span class="text-accent-red">&mdash;&nbsp; 25</span> <span>/ 18</span></span>
-                                                        </div>
+<!--                                                        <div class="text-points">-->
+<!--                                                            <span class="text-success"><i class="bi icon-check-circle-fill"></i> Points Used</span>-->
+<!--                                                            <span class="fw-bold">-->
+<!--                                                            <span class="text-accent-red">&mdash;&nbsp; 25</span> <span>/ 18</span></span>-->
+<!--                                                        </div>-->
                                                     </div>
                                                 <!-- Inner veg list -->
                                                 <div class="veg-list">
@@ -130,7 +158,10 @@ switch ($delivery_frequency) {
                                                     <?php }
                                                     ?>
                                                 </div>
-                                                <?php } ?>
+                                                <?php }
+                                                else {
+                                                    $single_products[] = $product;
+                                                }?>
 
                                             </div>
 
@@ -147,12 +178,16 @@ switch ($delivery_frequency) {
                             <div class="col-lg-2 col-md-6 col-12 d-flex flex-column justify-content-between">
                                 <!-- Action Buttons -->
                                 <div class="d-flex flex-column gap-2 w-100 align-items-md-end align-items-start action-buttons">
+                                    <?php if($product['hyper_product_type'] == 'choice') { ?>
                                     <button class="btn btn-outline-custom d-flex align-items-center gap-2 w-75 justify-content-center justify-content-md-start" onclick="notifyAction('Edit Choices')">
                                         <i class="bi icon-vegebox"></i> Edit Your Choices
                                     </button>
+                                    <?php } ?>
+                                    <?php if($product['type'] !== 'single') { ?>
                                     <button class="btn btn-outline-custom d-flex align-items-center gap-2 w-75 justify-content-center justify-content-md-start" onclick="notifyAction('Change Box')">
                                         <i class="bi icon-vegebox"></i> Change Your Box
                                     </button>
+                                    <?php } ?>
                                 </div>
 
                                 <div>
@@ -228,6 +263,60 @@ switch ($delivery_frequency) {
             echo get_template_part('inc/popups/user/user-edit-delivery-schedule');
             ?>
 
+            <?php
+            $customer = $user->getCustomer();
+            $hyper_products_arr = [];
+            $single_products_arr = [];
+
+            $customer_points = is_user() ? $customer['remaining_points'] : 0;
+
+            foreach ($hyper_products as $product) {
+                $hyper_products_arr[] = [
+                    'id' => $product['id'],
+                    'quantity' => $product['cart_quantity'],
+                    'price' => $product['gross_selling_price'],
+                    'points' => $product['point_systems_id'],
+                    'addedUsingPoints' => 0,
+                    'name' => $product['name'],
+                ];
+                $customer_points -= $product['point_systems_id'];
+            }
+            foreach($single_products_arr as $product) {
+                $single_products_arr[] = [
+                    'id' => $product['id'],
+                    'quantity' => $product['cart_quantity'],
+                    'price' => $product['gross_selling_price'],
+                    'points' => $product['point_systems_id'],
+                    'addedUsingPoints' => 0,
+                    'name' => $product['name'],
+                ];
+                $customer_points -= $product['point_systems_id'];
+            }
+
+            $checkout_data = [
+                'Comments' => '',
+                'CustomersID' => $customer['id'],
+                //'quantity' => 2,
+                'DeliveryDate' => $next_delivery_date,
+                'DeliveryStatus' => 'New',
+                'FrequencySchedule' => $delivery_frequency,
+                'OrderDate' => date('Y-m-d'),
+                'Price' => $cart->getTotal(),
+                'RoutesID' => $customer['route_id'],
+                'SingleProduct' => $single_products_arr,
+                'Created_by' => 'Ordle',
+                'deliverydates' => [
+                    $next_delivery_date,
+                ],
+                'deliverydays' => [
+                    date('l', strtotime($next_delivery_date)),
+                ],
+                'RemainingPoints' => $customer_points,
+                'created_by' => 'Customer',
+                'HyperProduct' => $hyper_products_arr,
+            ];
+            ?>
+
             <script>
                 function notifyAction(action) {
                     if(action === 'edit_schedule') {
@@ -245,18 +334,11 @@ switch ($delivery_frequency) {
                         html: `
                             <div class="modal-content">
                               <h1 class="modal-title">Thank you for your purchase</h1>
-                              <p class="modal-subtitle">Thank you too for chosing Cambridge Organic.</p>
+                              <p class="modal-subtitle">Thank you too for choosing Cambridge Organic.</p>
                               <p class="modal-note">The payment will only be taken after the delivery of your items.</p>
 
                               <div class="button-group">
-                                <button class="custom-btn btn-outline" onclick="handleSignOut()">
-                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                                    <polyline points="16 17 21 12 16 7"></polyline>
-                                    <line x1="21" y1="12" x2="9" y2="12"></line>
-                                  </svg>
-                                  Sign Out
-                                </button>
+
 
                                 <button class="custom-btn btn-outline" onclick="handleContinueShopping()">
                                   Continue Shopping
@@ -268,12 +350,77 @@ switch ($delivery_frequency) {
                               </div>
                             </div>
                           `
+                    }).then(res=>{
+                        location.reload();
                     });
                 }
+
+                function prompt_checkout_failure() {
+                    Swal.fire({
+                        customClass: {
+                            popup: 'confirm-order' // Connects to the CSS class we defined above
+                        },
+                        icon: 'error',
+                        showCloseButton: true,
+                        showConfirmButton: false, // Hide default SweetAlert buttons
+                        html: `
+                            <div class="modal-content">
+                              <h1 class="modal-title">An error occurred while placing your order</h1>
+
+                                 <div class="button-group">
+                                <button class="custom-btn btn-outline" onclick="handleContinueShopping()">
+                                  Continue Shopping
+                                </button>
+
+                                <button class="custom-btn btn-solid" onclick="handleManageAccount()">
+                                  Manage Account
+                                </button>
+                                </div>
+                              </div>
+                            </div>
+                          `
+                    });
+                }
+
+                function handleSignOut() {
+                    console.log("Signing out...");
+                    Swal.close();
+                }
+
+                function handleContinueShopping() {
+                    location.href = '<?php echo site_url() ?>';
+                    Swal.close();
+                }
+
+                function handleManageAccount() {
+                    location.href = '<?php echo site_url('customer') ?>';
+                    Swal.close();
+                }
+
+               function place_order() {
+                   const checkout_body = <?php echo json_encode($checkout_data); ?>;
+                   fetch(`${site_url}cart_action/checkout`, {
+                       method: "POST",
+                       headers: {
+                           "Content-Type": "application/json",
+                           "Accept": "application/json"
+                       },
+                       body: JSON.stringify(checkout_body)
+                   }).then(res=>res.json()).then(res=>{
+                       if(res.success) {
+                           prompt_checkout_successs();
+                       }else {
+                           prompt_checkout_failure();
+                       }
+                       const checkout_wrapper = document.querySelector('.product-checkout');
+                       checkout_wrapper.classList.remove('loading');
+                   })
+               }
 
                function confirm_order() {
                     const checkout_wrapper = document.querySelector('.product-checkout');
                     checkout_wrapper.classList.add('loading');
+
                     <?php
                    if(!is_user()) {
                        $data = $_SESSION['customer-info'];
@@ -292,7 +439,7 @@ switch ($delivery_frequency) {
                        $confirm_password = $data['confirm_password'] ?? '';
 
                        $house_number = $data['house_number'] ?? '';
-                       $house_name = $data['house_name'] ?? '';
+                       $house_name = $data['house_name'] ?? '-';
                        $address_line_1 = $data['address_line_1'] ?? '';
                        $address_line_2 = $data['address_line_2'] ?? '';
                        $city = $data['city'] ?? '';
@@ -352,31 +499,41 @@ switch ($delivery_frequency) {
                            'billing_postcode' => $billing_postcode,
                            'billing_gps' => $billing_gps,
                        ];
-
-                       //print_r($apiData);
-
-
-                   }else {
                        ?>
+                      const user_data = <?php echo json_encode($apiData); ?>;
 
+                       fetch(`${site_url}user_action/user_signup`, {
+                           method: "POST",
+                           headers: {
+                               "Content-Type": "application/json",
+                               "Accept": "application/json"
+                           },
+                           body: JSON.stringify(user_data)
+                       }).then(res=>res.json()).then(res=>{
+                           let res_errors = [];
+                           checkout_wrapper.classList.remove('loading');
+                           if(!res.success) {
+                               for(let i in  res.errors) {
+                                   res_errors.push(res.errors[i]);
+                               }
+                               alert(res_errors.join("\n"));
+                               return;
+                           }
+                           else {
+                               place_order();
+                           }
+                       });
+
+                        <?php
+                   }
+                   else {
+                       ?>
+                    place_order();
                        <?php
                      }
                    ?>
 
-                   function handleSignOut() {
-                       console.log("Signing out...");
-                       Swal.close();
-                   }
 
-                   function handleContinueShopping() {
-                       console.log("Continuing shopping...");
-                       Swal.close();
-                   }
-
-                   function handleManageAccount() {
-                       console.log("Managing account...");
-                       Swal.close();
-                   }
                }
             </script>
 

@@ -297,7 +297,7 @@ window.reloadElement = async (element, url = '') => {
     }
 };
 
-window.validateUKPostcode = function(postcode) {
+window.validateUKPostcode = async function(postcode) {
     if (!postcode) {
         return {
             valid: false,
@@ -305,14 +305,24 @@ window.validateUKPostcode = function(postcode) {
             error: 'Postcode is required.'
         };
     }
-
+    const _postcode = postcode;
     // Remove whitespace and convert to uppercase
     postcode = postcode.replace(/\s+/g, '').toUpperCase();
 
-    // UK postcode regex (supports GIR 0AA)
+    // UK postcode
     const regex = /^(GIR0AA|(?:[A-PR-UWYZ][0-9][0-9A-HJKSTUW]?|[A-PR-UWYZ][A-HK-Y][0-9][0-9ABEHMNPRVWXY]?)([0-9][ABD-HJLNP-UW-Z]{2}))$/;
 
-    const match = postcode.match(regex);
+    let match = postcode.match(regex);
+    let is_await = false;
+
+    if (!match) {
+        //Validate from server
+        postcode = _postcode;
+        await fetch(site_url + 'cart_action/validate_postcode?postcode=' + _postcode + '&ajax=1').then(res => res.json()).then(res => {
+            match = res.success;
+        });
+        is_await = true;
+    }
 
     if (!match) {
         return {
@@ -323,7 +333,7 @@ window.validateUKPostcode = function(postcode) {
     }
 
     // Insert the space before the inward code
-    const formatted = postcode.slice(0, -3) + ' ' + postcode.slice(-3);
+    const formatted = !is_await ? postcode.slice(0, -3) + ' ' + postcode.slice(-3) : _postcode;
 
     return {
         valid: true,
@@ -331,6 +341,8 @@ window.validateUKPostcode = function(postcode) {
         error: null
     };
 }
+
+
 
 // Prevent submitting forms with the .prevent-enter class by pressing Enter
 document.addEventListener('submit', function (e) {
@@ -347,6 +359,15 @@ document.addEventListener('submit', function (e) {
     }
 }, true);
 
+window.init_select_value = ()=>{
+    document.querySelectorAll('select').forEach((select)=>{
+        const val =  select.getAttribute('value');
+        if(val) {
+            select.value = val;
+        }
+    });
+}
+
 document.addEventListener("DOMContentLoaded", ()=>{
 
     if(document.querySelector(".accordion-container")) {
@@ -356,6 +377,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     }
 
     form_validate_init();
+    init_select_value();
 
     // Initialize all stepper elements on the page
     const steppers = document.querySelectorAll('.stepper');
@@ -521,6 +543,30 @@ window.init_inline_datepicker = (data = {}) => {
         const wrapper = $(this);
         const input = wrapper.find('input');
         const options = flatpicker_options(input, data);
+
+        const selectedDates = input.data('selecteddates');
+        if (selectedDates) {
+            const dates = selectedDates
+                .split(',')
+                .map(date => date.trim())
+                .filter(Boolean);
+
+            options.mode = 'multiple';
+            options.defaultDate = dates;
+
+            // Disable every date except selected dates
+            options.enable = dates;
+        }
+
+        const navigation = input.data('navigation');
+
+        if (navigation === false || navigation === 'false') {
+            options.prevArrow = '';
+            options.nextArrow = '';
+
+            // Prevent month/year selection
+            options.monthSelectorType = 'static';
+        }
 
         input.flatpickr({
             appendTo: this,

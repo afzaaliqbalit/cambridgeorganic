@@ -42,9 +42,9 @@ get_header( 'shop' );
 
                             <div class="sub-freq selection">
                                 <label class="me-2">How often?</label>
-                                <select class="form-select select" style=" min-width: 210px;">
-                                    <option>Add Once</option>
-                                    <option>Weekly</option>
+                                <select class="form-select select2 text-center" name="item_frequency" style=" min-width: 210px;">
+                                    <option value="add_once">Add Once</option>
+                                    <option value="add_always">Add Always</option>
                                 </select>
                             </div>
 

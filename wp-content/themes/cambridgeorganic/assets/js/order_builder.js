@@ -322,11 +322,12 @@ window.build_order_selector = (input)=> {
                         html: ele_html,
                         didOpen: ()=>{
                             init_hyperproduct_selector(orderItemsData);
-                            if(typeof input.onOpen !== "undefined") {
-                                input.onOpen();
-                            }
                         }
                     });
+
+                    if(typeof input.onOpen !== "undefined") {
+                        input.onOpen();
+                    }
 
                     document.querySelector('#hyperproduct-order-builder-confirm').addEventListener('click', ()=>{
                         if(document.querySelector('#hyperproduct-order-builder')) {

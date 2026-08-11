@@ -59,6 +59,12 @@ $border-light: #d1d5db;
 .color-orange {
   color: var(--orange);
 }
+.bg-red {
+  background-color: var(--red) !important;
+}
+.color-white {
+  color: #fff !important;
+}
 
 #shop-category-archieve {
   .shop-head {
@@ -514,6 +520,28 @@ $border-light: #d1d5db;
     left: 0;
     width: 100%;
     padding-bottom: 20px;
+  }
+}
+
+.box-message {
+  > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #eee;
+    padding: 6px 38px;
+    margin-top: 15px;
+    margin-left: -22px;
+    margin-right: -22px;
+    font-size: 15px;
+  }
+  .icon-basket {
+    width: 30px;
+    height: 40px;
+    margin-right: 10px;
+  }
+  p {
+    margin-bottom: 0;
   }
 }
 

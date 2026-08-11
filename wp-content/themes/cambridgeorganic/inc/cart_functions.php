@@ -1,7 +1,8 @@
 <?php
 $_GLOBALS['cart'] = new Cart();
 
-function endpoint_cart_actions($action=''): void
+
+function endpoint_cart_actions($action='')
 {
     $cart = new Cart();
     $product = new Products();
@@ -13,6 +14,7 @@ function endpoint_cart_actions($action=''): void
 
     $pid = $params['product_id'] ?? 0;
     $pqty = !empty($params['qty']) ? intval($params['qty']) : 0;
+    $freq = !empty($params['attrs']['item_frequency']) ? $params['attrs']['item_frequency'] : '';
     $res = [];
     switch ($action) {
         case 'product_info':
@@ -25,19 +27,62 @@ function endpoint_cart_actions($action=''): void
             break;
         case 'add':
             $item_id = intval($pid);
-
             $cart->addProduct($item_id, [
-                'cart_quantity' => $pqty
+                'cart_quantity' => $pqty,
+                'item_frequency' => $freq
             ]);
             $res = ['success'=>1, 'message'=>'Item added to cart'];
         break;
+        case 'update':
+            $item_id = intval($pid);
+            $cart->updateProduct($item_id, [
+                'cart_quantity' => $pqty,
+                'item_frequency' => $freq
+            ]);
+            $res = ['success'=>1, 'message'=>'Item update cart'];
+            break;
         case 'remove':
             $item_id = intval($pid);
             $cart->deleteItem($item_id);
             $res = ['success'=>1, 'message'=>'Item removed from cart'];
         break;
+        case 'validate_postcode':
+            $postcode = $params['postcode'] ?? '';
+            $getPostcode = $cart->checkPostcode($postcode);
+            $res = ['success'=>$getPostcode['success'], 'data'=>$getPostcode];
+            break;
+        case 'checkout':
+            $res = $cart->checkout($params);
+            $success = $res['status'] === 'success';
+            if($success) {
+                $cart->clear();
+            }
+            $res = ['success'=>$success, 'data'=>$res];
+            break;
     }
 
+    echo json_encode($res);
+    exit;
+}
+
+function endpoint_user_actions($action='') {
+    $user = new User();
+
+    $params = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
+    if (empty($params)) {
+        $params = json_decode(file_get_contents('php://input'), true);
+    }
+    $res = [];
+    switch ($action) {
+        case 'user_signup':
+            $signup = $user->signup($params);
+            if(!empty($signup['success'])) {
+                $res = ['success' => 1, 'user_info' => $signup];
+            }else {
+                $res = ['success' => 0, 'errors' => $signup['errors']];
+            }
+            break;
+    }
     echo json_encode($res);
     exit;
 }
@@ -56,3 +101,7 @@ add_action('init', function() {
         }
     }
 });
+
+function product_weight($product=[]) {
+    return trim(@$product['weight'] .' '. @$product['unit']);
+}

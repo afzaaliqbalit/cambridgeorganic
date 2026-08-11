@@ -112,8 +112,8 @@
         <hr class="my-4" style="opacity: 0.1;">
 
         <div class="d-flex gap-3 justify-content-center">
-            <button id="hyperproduct-order-builder-confirm" type="button" class="button btn-secondary">Confirm & Save Selection</button>
             <button id="hyperproduct-order-builder-skip" type="button" class="button btn-primary">Skip for now</button>
+            <button id="hyperproduct-order-builder-confirm" type="button" class="button btn-secondary">Confirm & Save Selection</button>
         </div>
     </div>
 </template>

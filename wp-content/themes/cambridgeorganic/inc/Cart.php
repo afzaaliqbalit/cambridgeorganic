@@ -23,7 +23,6 @@ class Cart
      */
     public function getCart()
     {
-
         $session = get_session($this->sessionKey) ?? [];
         return $session;
     }
@@ -38,6 +37,7 @@ class Cart
     public function getItem($key, $default = null)
     {
         $cart = $this->getCart();
+        $cart = !empty($cart['products']) ? $cart['products'] : [];
 
         return $cart[$key] ?? $default;
     }
@@ -55,8 +55,26 @@ class Cart
             $cart['products'][$key] = $product_info;
         }
 
+        if(!empty($value['item_frequency'])) {
+            $cart['products'][$key]['item_frequency'] = $value['item_frequency'];
+        }
+
         set_session($this->sessionKey, $cart);
 
+        return $cart[$key];
+    }
+
+    public function updateProduct($key, $value) {
+        $cart = $this->getCart();
+        $products = !empty($cart['products']) ? $cart['products'] : [];
+        $qty = $value['cart_quantity'] ?? 1;
+        if($products) {
+            $cart['products'][$key]['cart_quantity'] = $qty;
+            if(!empty($value['item_frequency'])) {
+                $cart['products'][$key]['item_frequency'] = $value['item_frequency'];
+            }
+            set_session($this->sessionKey, $cart);
+        }
         return $cart[$key];
     }
 
@@ -217,6 +235,20 @@ class Cart
             'next_delivery_month' => $next_delivery_month,
             'next_delivery_date' => $next_delivery_date,
         ];
+    }
+
+    public function checkout($data=[]) {
+        $apiClient = new APIClient();
+        $request = $apiClient->request('POST', '/customers/place-order', $data);
+
+        return $request;
+    }
+
+    public function checkPostcode($postcode='') {
+        $api = new APIClient();
+        $request = $api->request('GET', '/customers/postcode-info',['postcode' => $postcode]);
+
+        return $request;
     }
 
     public function clear() {

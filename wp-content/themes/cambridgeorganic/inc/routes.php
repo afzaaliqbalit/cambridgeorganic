@@ -25,6 +25,7 @@ add_action('init', function () {
     add_rewrite_rule('^customer/([^/]+)/?$', 'index.php?account_page=$matches[1]', 'top');
     add_rewrite_rule('^remote-request/([^/]+)/?$', 'index.php?remote_endpoint=$matches[1]', 'top');
     add_rewrite_rule('^cart_action/([^/]+)/?$', 'index.php?cart_action=$matches[1]', 'top');
+    add_rewrite_rule('^user_action/([^/]+)/?$', 'index.php?user_action=$matches[1]', 'top');
 });
 
 add_filter('query_vars', function ($vars) {
@@ -32,12 +33,14 @@ add_filter('query_vars', function ($vars) {
     $vars[] = 'account_page';
     $vars[] = 'remote_endpoint';
     $vars[] = 'cart_action';
+    $vars[] = 'user_action';
     return $vars;
 });
 
 add_action('template_redirect', function () {
     if (get_query_var('remote_endpoint')) { endpoint_remote_request(); }
     if (get_query_var('cart_action')) { endpoint_cart_actions(get_query_var('cart_action')); }
+    if (get_query_var('user_action')) { endpoint_user_actions(get_query_var('user_action')); }
 });
 
 function load_custom_product_template($template)

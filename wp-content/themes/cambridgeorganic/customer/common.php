@@ -1,8 +1,9 @@
 <?php
 $current_page = $args['current_page'] ?? '';
+$user = new User();
 
 if($current_page === 'logout') {
-    $user = new User();
+
     $user->logout();
     wp_redirect(site_url());
     exit;

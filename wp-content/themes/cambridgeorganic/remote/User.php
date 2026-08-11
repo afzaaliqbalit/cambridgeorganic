@@ -24,6 +24,22 @@ class User extends ApiClient
         return $response;
     }
 
+    public function signup($data)
+    {
+        $response = $this->request('POST', '/customers/signup', $data);
+
+        if (
+            !empty($response['success'])
+        )
+        {
+            set_session('api_token', $response['data']['token']);
+            set_session('api_token_type', $response['data']['token_type']);
+            set_session('customer', $response['data']['customer']);
+        }
+
+        return $response;
+    }
+
     public function isLoggedIn()
     {
         return !empty(get_session('api_token'));
@@ -71,11 +87,40 @@ class User extends ApiClient
         return $response;
     }
 
+    public function profile() {
+        $response = $this->request('GET', '/customers/me');
+        return $response;
+    }
+
     function getCustomerOrders() {
         $response = $this->request('GET', '/customers/orders', []);
         if(!empty($response['success'])) {
-            return $response['data'];
+            $orders = $response['data'];
+
+            if(!empty($orders['products'])) {
+
+            }
+
+            return $orders;
         }
         return [];
+    }
+
+    public function nextOrder() {
+        if(!is_user()) {
+            $cart_data = $this->getCart();
+            return $cart_data;
+        }
+        else {
+            $user = new User();
+            $userOrders = $user->getCustomerOrders();
+            $futureOrders = array_filter($userOrders, function ($order) {
+                return !empty($order['deliveryDates'])
+                    && $order['deliveryDates'][0] > date('Y-m-d');
+            });
+            $futureOrders = array_first($futureOrders);
+            $futureOrders['next_delivery_date'] = $futureOrders['deliveryDates'][0];
+            return $futureOrders;
+        }
     }
 }

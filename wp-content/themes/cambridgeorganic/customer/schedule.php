@@ -6,6 +6,10 @@
         <?php
             $user = new User();
             $orders = $user->getCustomerOrders();
+            $orderDates = [];
+            foreach ($orders as $order) {
+                $orderDates[date('m-Y',strtotime($order['orderDate']))][] = ['id'=>$order['id'], 'date'=>$order['orderDate']];
+            }
         ?>
 
         <div id="profile-schedule" class="body-content">
@@ -18,12 +22,14 @@
             <div class="owl-carousel schedule-scroller camb-woo-products-slider">
 
                 <?php
-                    foreach($orders as $order) {
-                        $delivery_date = $order['delivery_date'];
+                    foreach($orderDates as $orders) {
+                        $order_dates = array_map(function($order) {return $order['date'];}, $orders);
+                        $order_dates = array_unique($order_dates);
+                        $order_dates = implode(', ', $order_dates);
                 ?>
                     <div class="item">
                         <div class="inline-datepicker-wrap">
-                            <input type="hidden" name="selectedDates" data-defaultDate="<?php echo $delivery_date ?>" data-from="<?php echo $delivery_date ?>" data-to="<?php echo $delivery_date ?>" onchange="edit_delivery_schedule()">
+                            <input type="hidden" name="selectedDates" data-navigation="false" data-selecteddates="<?php echo $order_dates ?>" onchange="edit_delivery_schedule()">
                         </div>
                     </div>
                 <?php } ?>

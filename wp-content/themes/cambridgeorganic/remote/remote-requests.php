@@ -3,19 +3,18 @@
 function cambridge_products($args=[]) {
     $attr = shortcode_atts([
         'cat'=>'',
-        'type' => 'single',
-        'limit' => 9,
+        'type' => 'single'
     ],$args);
     $products = new Products();
 
     if($attr['type'] === 'single') {
         $getProducts = $products->getProducts([
-            'limit' => $attr['limit']
+           // 'limit' => $attr['limit']
         ]);
     }
     if($attr['type'] === 'hyper') {
         $getProducts = $products->gethyperproducts([
-            'limit' => $attr['limit']
+           // 'limit' => $attr['limit']
         ]);
     }
 
@@ -32,7 +31,7 @@ function cambridge_products($args=[]) {
             'products' => $getProducts,
             'cat'      => $attr['cat'],
             'type'      => $attr['type'],
-            'limit'      => $attr['limit'],
+            //'limit'      => $attr['limit'],
         ]
     );
 

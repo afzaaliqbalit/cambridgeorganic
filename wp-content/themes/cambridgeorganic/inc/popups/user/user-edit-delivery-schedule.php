@@ -3,6 +3,21 @@
         <?php
         $cart = new Cart();
         $getCart = $cart->getCart();
+        $user = new User();
+        $next_delivery_date = false;
+        if(!is_user()) {
+            $next_delivery_date = $getCart['next_delivery_date'];
+        }
+        else {
+            $next_order = $user->nextOrder();
+            if(!empty($next_order['deliveryDates'])) {
+                $getCart['next_delivery_date'] = $next_order['deliveryDates'][0];
+            }
+            if(!empty($next_order['frequencySchedule'])) {
+                $getCart['delivery_frequency'] = $next_order['frequencySchedule'];
+            }
+        }
+
         if(!empty($getCart['next_delivery_date'])) {
         $weekday = date('N',strtotime($getCart['next_delivery_date']));
         $deliveryDate = date('Y-m-d',strtotime($getCart['next_delivery_date']));
@@ -18,11 +33,11 @@
 
 
                 <div class="pt-2">
-                    <div style="max-width: 450px" class="m-auto text-left">
+                    <div class="m-auto text-left">
                         <?php
                         if(!empty($frequencies)) {
                             ?>
-                            <div class="d-flex gap-3 pb-4">
+                            <div class="d-flex gap-3 pb-4 justify-content-center">
                                 <?php foreach($frequencies as $frequency) {
                                     $checked = $frequency == $delivery_frequency ? 'checked' : '';
                                     ?>
