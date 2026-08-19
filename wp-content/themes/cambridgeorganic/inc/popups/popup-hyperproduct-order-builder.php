@@ -5,6 +5,11 @@
             <p class="text-muted small">We need you to build your Box for this week’s Delivery:</p>
         </div>
 
+        <?php
+            $user = new User();
+            $customer = $user->getCustomer();
+        ?>
+
         <!-- Main Form Wrapper -->
         <form id="veg-box-form" onsubmit="event.preventDefault();">
 
@@ -26,9 +31,11 @@
                     <div class="fs-5 fw-medium text-emerald-950 d-flex align-items-center gap-2">
                         <span>Points Used</span>
                         <span class="text-muted">—</span>
+
                         <span class="fw-bold text-wine-red fs-4" id="points-summary-badge">
-                                    <span id="points-used-counter">0</span> / <span id="points-limit-counter">0</span>
-                                </span>
+                                    <span id="points-used-counter">0</span> <?php if(is_user()) { ?>/ <span id="points-limit-counter"><?php echo $customer['remaining_points'] ?? '0'; ?></span> <?php } ?>
+                        </span>
+
                     </div>
                 </div>
 
@@ -75,32 +82,25 @@
                             </div>
                         </div>
 
+                        <?php if(is_user()) { ?>
                         <!-- Points Calculations & Warning Box -->
                         <div class="pt-3 border-top border-danger-subtle">
                             <div class="text-center text-wine-red">
                                 <h6 class="fw-bold mb-1">Our Points System</h6>
-
                                 <p class="fw-semibold small mb-0">
                                     You have gone over your points by:
                                 </p>
+                                <div id="points-over-count" class="display-6 fw-extrabold my-0">0</div>
+                                <p class="fw-semibold small mb-0">Incurring an additional cost of:</p>
 
-                                <div id="points-over-count" class="display-6 fw-extrabold my-0">
-                                    7
-                                </div>
-
-                                <p class="fw-semibold small mb-0">
-                                    Incurring an additional cost of:
-                                </p>
-
-                                <div id="points-over-cost" class="fs-5 fw-bold my-1">
-                                    £3.50
-                                </div>
+                                <div id="points-over-cost" class="fs-5 fw-bold my-1">£0.00</div>
 
                                 <p class="small text-wine-red text-opacity-75 lh-sm mt-2 px-2" style="font-size: 0.82rem;">
                                     You can either amend your order by removing items / choosing lower quantities, or proceed with this additional cost.
                                 </p>
                             </div>
                         </div>
+                        <?php } ?>
 
                     </div>
 
@@ -112,7 +112,7 @@
         <hr class="my-4" style="opacity: 0.1;">
 
         <div class="d-flex gap-3 justify-content-center">
-            <button id="hyperproduct-order-builder-skip" type="button" class="button btn-primary">Skip for now</button>
+<!--            <button id="hyperproduct-order-builder-skip" type="button" class="button btn-primary">Skip for now</button>-->
             <button id="hyperproduct-order-builder-confirm" type="button" class="button btn-secondary">Confirm & Save Selection</button>
         </div>
     </div>

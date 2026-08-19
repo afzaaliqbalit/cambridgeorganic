@@ -27,11 +27,16 @@ function endpoint_cart_actions($action='')
             break;
         case 'add':
             $item_id = intval($pid);
-            $cart->addProduct($item_id, [
+            $addprod = $cart->addProduct($item_id, [
                 'cart_quantity' => $pqty,
                 'item_frequency' => $freq
             ]);
-            $res = ['success'=>1, 'message'=>'Item added to cart'];
+
+            if($addprod !== false) {
+                $res = ['success'=>1, 'message'=>'Item added to cart'];
+            }else {
+                $res = ['success'=>0, 'message'=>'Could not add item to cart'];
+            }
         break;
         case 'update':
             $item_id = intval($pid);
@@ -103,5 +108,7 @@ add_action('init', function() {
 });
 
 function product_weight($product=[]) {
-    return trim(@$product['weight'] .' '. @$product['unit']);
+
+    return trim(@$product['weight'] .' '. @$product['per_unit']);
+
 }

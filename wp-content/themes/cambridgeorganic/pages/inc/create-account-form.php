@@ -153,9 +153,9 @@
 
             <!-- Postcode -->
             <div class="form-group">
-                <label>What3Words Location: <span>*</span></label>
+                <label>What3Words Location:</label>
                 <div class="w-100">
-                    <input type="text" placeholder="" name="ww3_location" class="form-control" required>
+                    <input type="text" placeholder="" name="ww3_location" class="form-control">
                 </div>
             </div>
         </div>

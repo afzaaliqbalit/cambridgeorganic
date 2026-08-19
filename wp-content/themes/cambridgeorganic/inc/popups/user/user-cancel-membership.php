@@ -8,7 +8,7 @@
                     <div class="pt-2">
                         <div style="max-width: 450px" class="m-auto text-left">
                             <div class="d-flex flex-column gap-3 pt-3">
-                                <div class="d-flex gap-3">
+                                <?php /*<div class="d-flex gap-3">
                                     <div class="text-checkbox" style="min-width: max-content;">
                                         <input type="checkbox" value="">
                                         <span class="fs-14" style="min-width: 180px">Pause</span>
@@ -16,7 +16,7 @@
                                     <div>
                                         <p class="fs-14">Do you just want to take a break from your next scheduled deliveries? If so, then click Pause.</p>
                                     </div>
-                                </div>
+                                </div>*/ ?>
 
                                 <div class="d-flex gap-3">
                                     <div class="text-checkbox" style="min-width: max-content;">

@@ -246,7 +246,7 @@ function camb_product_boxes($args=[]) {
 
 add_shortcode('camb_product_boxes','camb_product_boxes');
 
-function term_buttons_shortcode($atts) {
+function term_buttons_shortcode1($atts) {
     global $wp;
 
     $atts = shortcode_atts([
@@ -325,6 +325,120 @@ function term_buttons_shortcode($atts) {
     </div>
      <?php
 
+    return ob_get_clean();
+}
+
+function term_buttons_shortcode($atts) {
+    $args = shortcode_atts([
+        'type'   => '',
+    ], $atts);
+        ob_start();
+
+    $filters = [
+        'box_type' => [
+            'title' => 'Type of Produce',
+            'options' => [
+                'fruit' => 'Fruit Box <i class="icon-info"></i>',
+                'vegetable' => 'Veg Box <i class="icon-info"></i>',
+                'Fruit & Vegetable' => 'Fruit &amp; Veg <i class="icon-info"></i>',
+            ],
+        ],
+
+        'box_size' => [
+            'title' => 'Size of Box',
+            'options' => [
+                'small'  => 'Small <i class="icon-info"></i>',
+                'medium' => 'Medium <i class="icon-info"></i>',
+                'large'  => 'Large <i class="icon-info"></i>',
+                'giant'  => 'Giant <i class="icon-info"></i>',
+            ],
+        ],
+
+        'hyper_product_type' => [
+            'title' => 'Customisation',
+            'options' => [
+                'hyper'  => 'Build Your Own <i class="icon-info"></i>',
+                'choice' => '3 Exclusions <i class="icon-info"></i>',
+                'fixed'  => 'No Customisation <i class="icon-info"></i>',
+            ],
+        ],
+    ];
+
+    if($args['type'] === 'single') {
+        unset($filters['type']);
+        unset($filters['box_type']);
+    }
+    ?>
+    <form id="shop-filter-form">
+        <?php
+        foreach ($filters as $name => $filter) {
+            $selected = $_GET[$name] ?? '';
+            ?>
+            <div class="shop-head-group">
+                <h3><?= htmlspecialchars($filter['title']) ?></h3>
+
+                <?php foreach ($filter['options'] as $value => $label): ?>
+                    <?php $active = ($selected === $value); ?>
+
+                    <div class="flex-inline-list">
+                        <label class="button btn-large">
+                            <input
+                                type="radio"
+                                name="<?= htmlspecialchars($name) ?>"
+                                value="<?= htmlspecialchars($value) ?>"
+                                <?= $active ? 'checked' : '' ?>
+                            >
+                            <?= $label ?>
+                        </label>
+                    </div>
+
+                <?php endforeach; ?>
+            </div>
+            <?php
+        }
+        ?>
+        <script>
+            document.querySelectorAll('#shop-filter-form input[type="radio"]').forEach((input) => {
+                input.addEventListener('mousedown', (e) => {
+                    e.currentTarget.dataset.wasChecked = e.currentTarget.checked;
+                });
+
+                input.addEventListener('click', (e) => {
+                    const radio = e.currentTarget;
+                    const wasChecked = radio.dataset.wasChecked === 'true';
+
+                    if (wasChecked) {
+                        // Browser has selected it, so undo that selection
+                        setTimeout(() => {
+                            radio.checked = false;
+                            submitFilterForm(radio);
+                        }, 0);
+                    } else {
+                        submitFilterForm(radio);
+                    }
+                });
+            });
+
+            function submitFilterForm(radio) {
+                const form = radio.closest('form');
+                const params = new URLSearchParams(new FormData(form));
+                const url = new URL(window.location.href);
+
+                ['box_type', 'box_size', 'type','hyper_product_type'].forEach((key) => {
+                    url.searchParams.delete(key);
+                });
+
+                params.forEach((value, key) => {
+                    url.searchParams.set(key, value);
+                });
+
+                reloadElement('#shop-category-archive-wrap', url, true).then(()=>{
+                    init_sidebar_scroll();
+                });
+            }
+        </script>
+    </form>
+    <?php
     return ob_get_clean();
 }
 

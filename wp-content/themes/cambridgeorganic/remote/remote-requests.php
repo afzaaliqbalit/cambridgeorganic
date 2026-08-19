@@ -7,16 +7,18 @@ function cambridge_products($args=[]) {
     ],$args);
     $products = new Products();
 
-    if($attr['type'] === 'single') {
-        $getProducts = $products->getProducts([
-           // 'limit' => $attr['limit']
-        ]);
-    }
-    if($attr['type'] === 'hyper') {
-        $getProducts = $products->gethyperproducts([
-           // 'limit' => $attr['limit']
-        ]);
-    }
+    $filter_arr = ['type','box_size','box_type','hyper_product_type'];
+    $get_filter = array_combine(
+        $filter_arr,
+        array_map(
+            fn($key) => $_GET[$key] ?? '',
+            $filter_arr
+        )
+    );
+
+    $get_filter['type'] = $attr['type'];
+
+    $getProducts = $products->getProducts($get_filter);
 
     if(!empty($attr['limit'])) {
         $getProducts = array_splice($getProducts,0,$attr['limit']);

@@ -9,7 +9,7 @@
             <div><i class="icon-vegebox"></i> 8-10 Varieties</div>
         </div>
         <div class="box-footer">
-            <h5>Prices from</h5>
+            <h5>Price</h5>
             <h4 class="prod-price">£23</h4>
 
             <div class="tooltip-wrapper">

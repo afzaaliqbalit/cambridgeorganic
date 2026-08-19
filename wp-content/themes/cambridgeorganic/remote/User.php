@@ -107,8 +107,9 @@ class User extends ApiClient
     }
 
     public function nextOrder() {
+        $cart = new Cart();
         if(!is_user()) {
-            $cart_data = $this->getCart();
+            $cart_data = $cart->getCart();
             return $cart_data;
         }
         else {

@@ -8,10 +8,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 get_header( 'shop' );
+
+$cart = new Cart();
 ?>
 
-    <div class="container page-wrap">
-        <div class="single-product-wrap">
+    <div class="container page-wrap product-box-wrapper">
+        <div class="single-product-wrap catalog-boxes">
             <div class="row">
                 <div class="col-5 product-image">
                     <img src="<?php echo thumbnail($args['image']) ?>">
@@ -20,37 +22,111 @@ get_header( 'shop' );
                     <!-- TITLE -->
                     <div class="product-title">
                         <h2 class="mb-0 fw-bold"><?php echo $args['name'] ?></h2>
-                        <?php if(!empty($args['weight'])) { ?>
-                        <span class="text-muted"><?php echo $args['weight'] ?> <?php echo $args['per_unit'] ?></span>
+                        <?php if(!empty($args['weight_kg'])) { ?>
+                        <span class="text-muted"><?php echo product_weight($args)?></span>
                         <?php } ?>
                     </div>
 
                     <!-- TAGS -->
-                    <?php /*<div>
-                        <div class="tag-wrap">
-                            <span><i class="icon-info"></i>Organic</span>
-                            <span><i class="icon-eu"></i></span>
-                            <span>Andalucia, Spain</span>
+
+                    <?php
+                    if($args['type'] !== 'single') {
+                        $btnClass = 'btn orange';
+                        $btnAction = 'add';
+                        $onclick = 'addToCartItem(this)';
+                        $btnText = 'Select';
+                        $add_to_cart = '';
+                    }else {
+                        $btnClass = 'btn orange';
+                        $btnAction = 'add';
+                        $onclick = 'add_to_cart('.$args['id'].', '.$args['net_selling_price'].', 1, { item_frequency: this.closest(\'.product-select-box\').querySelector(\'.item_frequancy\').value })';
+                        $btnText = 'Select';
+                    }
+
+                    if(!is_user() && !empty($_SESSION['ordle-cart']['routeDay'])) {
+                        $add_to_cart = 'guest_add_to_cart';
+                    }
+                    if(!is_user() && empty($_SESSION['ordle-cart']['routeDay'])) {
+                        $onclick = '';
+                    }
+                    if(is_user()) {
+                        $add_to_cart = 'add_to_cart';
+                    }
+                    if(!empty($cart->getItem($args['id']))) {
+
+                        ?>
+                        <div class="box-message">
+                            <div>
+                                <i class="icon-basket"></i>
+                                <p>This Item is in your Basket for next Delivery</p>
+                            </div>
                         </div>
-                    </div>*/ ?>
+                        <?php
+
+                        if($args['type'] !== 'single') {
+                            $btnAction = 'remove';
+                            $add_to_cart = 'remove_cart_item';
+                            $onclick = 'removeCartItem(' . $args['id'] . ')';
+                            $btnClass = 'btn bg-red color-white';
+                            $btnText = 'Remove';
+                            if ($args['hyper_product_type'] === 'choice') {
+                                $btnAction = 'update';
+                                $add_to_cart = 'update_cart_item';
+                                $onclick = 'updateCartItem(this, ' . $args['id'] . ')';
+                                $btnText = 'Update';
+                            }
+                        }else {
+                            $btnAction = 'update';
+                            $add_to_cart = 'update_cart_item';
+                            $onclick = 'updateCartItem(this, '.$args['id'].', this.value, { item_frequency: this.closest(\'.product-select-box\').querySelector(\'.item_frequancy\').value })';
+                            $btnText = 'Update';
+                        }
+
+                    }
+                    ?>
 
                     <!-- PRICE + CONTROLS -->
                     <div>
-                        <div class="price-info">
+                        <div class="price-info product-select-box box-footer">
 
-                            <h3 class="product-price"><?php echo price($args['selling_price']) ?></h3>
+                            <h3 class="product-price"><?php echo price($args['gross_selling_price']) ?></h3>
 
-                            <div class="sub-freq selection">
-                                <label class="me-2">How often?</label>
-                                <select class="form-select select2 text-center" name="item_frequency" style=" min-width: 210px;">
-                                    <option value="add_once">Add Once</option>
-                                    <option value="add_always">Add Always</option>
-                                </select>
-                            </div>
+                            <?php if($args['type'] == 'single') {
+                                $cart_item = $cart->getItem($args['id']);
+                                ?>
 
-                            <!-- QUANTITY -->
+                                <div class="var-selection">
+                                    <label class="mb-2">How often?</label>
+                                    <select class="form-select select2 text-center item_frequancy" name="item_frequancy" value="<?php echo $cart_item['item_frequency'] ?? '' ?>">
+                                        <option value="add_once">Add Once</option>
+                                        <option value="add_always">Add Always</option>
+                                    </select>
+                                </div>
 
-                            <?php echo get_template_part('templates/stepper-input', null, ['name' => 'quantity']); ?>
+                                <?php
+                                    if(!empty($cart->getItem($args['id']))) {
+                                        echo get_template_part('templates/stepper-input', null,
+                                            [
+                                                'name' => 'quantity',
+                                                'onchange' => $onclick,
+                                                'value' => $cart_item['cart_quantity'] ?? 1
+                                            ]);
+                                    }
+                                ?>
+                                <?php
+
+                                ?>
+                                <a href="#" role="button" data-quantity="1" class="btn button <?php echo $btnClass ?>" onclick="<?php echo $onclick ?>" data-pid="<?php echo $args['id'] ?>" aria-label="<?php echo $btnText ?>"><?php echo $btnText ?></a>
+                                <?php
+
+                            }else {
+                                ?>
+                                <div class="tooltip-wrapper">
+                                    <button type="button" class="<?php echo $btnClass.' '.$add_to_cart ?>" data-slug="<?php echo $args['slug'] ?>" data-pid="<?php echo $args['id'] ?>" data-choicebox="<?php echo $args['hyper_product_type'] ?>" onclick="<?php echo $onclick ?>" data-price="<?php echo $args['net_selling_price'] ?>" <?php if(empty($add_to_cart)) {?> data-tooltip="login-tooltip-content" <?php } ?>><?php echo $btnText ?></button>
+                                </div>
+                                <?php
+                            } ?>
+
 
                         </div>
                     </div>

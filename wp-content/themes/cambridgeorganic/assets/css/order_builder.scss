@@ -48,12 +48,17 @@
         border: 1px solid #bfc9d1;
         border-radius: 8px;
         background-color: #ffffff;
+        width: 840px;
     }
 
     .item-card {
         border: 1px solid #d1d5db;
         border-radius: 6px;
         transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        &.disabled {
+            background-color: #eee !important;
+            pointer-events: none;
+        }
     }
     .item-card:hover {
         border-color: #a3a3a3;
@@ -90,6 +95,24 @@
         .vertical-divider {
             border-right: 2px solid #e2e8f0;
             min-height: 100%;
+        }
+    }
+
+    .item-origin {
+        margin-top: 8px;
+        font-size: 14px;
+    }
+
+    .stepper {
+        .stepper__btn {
+            width: 40px;
+            height: 35px;
+            font-size: 21px;
+        }
+        .stepper__value {
+            font-size: 16px;
+            width: 44px !important;
+            font-weight: 500 !important;
         }
     }
 

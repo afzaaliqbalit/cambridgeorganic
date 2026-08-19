@@ -31,19 +31,20 @@ function getOriginBadge(iconType, originText) {
 function renderStepperInput(item) {
     return `
                 <!-- TEMPLATE PART: get_template_part('templates/stepper-input', null, ['name' => 'quantity', 'id' => '${item.id}']) -->
-                <div class="d-flex align-items-center gap-2 user-select-none">
-                    <button type="button"
+                <!-- d-flex align-items-center gap-2 user-select-none-->
+                <div class="stepper">
+                    <button
                             onclick="updateQuantity('${item.id}', -1)"
-                            class="stepper-btn-minus"
+                            class="stepper-btn-minus stepper__btn stepper__btn--decrement"
                             aria-label="Decrease quantity">
                         –
                     </button>
-                    <span class="fw-bold px-1 text-dark" id="qty-val-${item.id}">
+                    <span class="fw-bold px-1 text-dark stepper__value" id="qty-val-${item.id}">
                         ${item.quantity}
                     </span>
-                    <button type="button"
+                    <button
                             onclick="updateQuantity('${item.id}', 1)"
-                            class="stepper-btn-plus"
+                            class="stepper-btn-plus stepper__btn stepper__btn--increment"
                             aria-label="Increase quantity">
                         +
                     </button>
@@ -96,8 +97,11 @@ function renderItems(filterQuery = "") {
                             </div>`;
         }
 
+        //const origin_icon = item.origin ? getOriginBadge(item.iconType, item.origin) : '';
+        const origin_icon = item.origin ? '<div class="item-origin">'+item.origin+'</div>' : '';
+
         return `
-                    <div class="item-card ${bgClass} p-3 mb-2 d-flex align-items-center justify-content-between gap-2">
+                    <div class="item-card ${bgClass} p-3 mb-2 d-flex align-items-center justify-content-between gap-2 ${item.maxStock <= 0 ? 'disabled':''}">
                         <!-- Left Image Thumbnail -->
                         <div class="flex-shrink-0">
                             <img src="${item.image}" alt="${item.name}"
@@ -117,8 +121,9 @@ function renderItems(filterQuery = "") {
                                 <span class="text-muted">Points</span>
                                 <span class="fw-bold text-dark" id="item-pts-${item.id}">${item.points}</span>
                             </div>
-
-                            ${getOriginBadge(item.iconType, item.origin)}
+                            
+                            ${origin_icon}
+                            
                         </div>
 
                         <!-- Right Stepper -->
@@ -320,6 +325,7 @@ window.build_order_selector = (input)=> {
                         showCloseButton: true,
                         showConfirmButton: false,
                         html: ele_html,
+                        width: 'auto',
                         didOpen: ()=>{
                             init_hyperproduct_selector(orderItemsData);
                         }
@@ -336,7 +342,11 @@ window.build_order_selector = (input)=> {
 
                         php_session.get('ordle-cart').then(data => {
 
-                            const cart_products = Array.isArray(data.products) ? data.products : [];
+                            let cart_products = Array.isArray(data.products) ? data.products : [];
+
+                            if(!is_login) {
+                                cart_products = [];
+                            }
 
                             const selected_items = JSON.parse(
                                 document.querySelector('#selected-items-input').value || '[]'

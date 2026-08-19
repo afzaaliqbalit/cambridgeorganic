@@ -2,9 +2,10 @@
 
 class Products extends ApiClient
 {
-    public function getProducts()
+    public function getProducts($options = [])
     {
-        $response = $this->request('GET', '/getproducts');
+        $options = array_filter($options);
+        $response = $this->request('GET', '/getproducts', $options);
 
         if (
             !empty($response['success']) &&
@@ -16,10 +17,9 @@ class Products extends ApiClient
         return [];
     }
 
-    public function gethyperproducts()
+    public function gethyperproducts($options = [])
     {
         $response = $this->request('GET', '/gethyperproducts');
-
 
         if (
             !empty($response['success']) &&

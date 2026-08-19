@@ -50,7 +50,8 @@ function load_custom_product_template($template)
 
     if ($product_slug) {
         $get_product = $products->getProduct($product_slug);
-        return get_template_part('page-product', null, $get_product);
+        echo get_template_part('pages/page-product', null, $get_product);
+        return;
     }
 
     // Profile page

@@ -32,7 +32,12 @@ window.add_to_cart = async (product_id, product_price, qty = 1, attrs = {}) => {
             document.querySelector('.catalog-boxes').classList.add('loading');
         }
         const product_info = await post_json(`${site_url}cart_action/product_info`, {product_id});
-        await add_cart_item(product_id, product_price, qty, attrs);
+        await add_cart_item(product_id, product_price, qty, attrs).then(res=>{
+            console.log(res);
+            if(!res.success) {
+                alert(res.message);
+            }
+        });
         reloadCart();
         return product_info;
     } catch (error) {
@@ -75,13 +80,15 @@ window.updateCartItem = (ele, product_id, qty, attrs={}) => {
 }
 
 window.addToCartItem = (box) => {
+        if(!is_login && !SessionStorage.get('user_signup_form')) {
+            return;
+        }
         document.querySelectorAll('.product-box-wrapper.loading').forEach((b)=>{
             b.classList.remove('loading');
         });
 
-        const parent = box.closest('.product-box-wrapper');
+        //const parent = box.closest('.product-box-wrapper');
 
-        const footer = parent.querySelector('.box-footer');
         const pid = box.dataset.pid;
 
         const p_choicebox = box.dataset.choicebox;
@@ -89,7 +96,7 @@ window.addToCartItem = (box) => {
 
         box.closest('.catalog-boxes').classList.add('loading');
 
-        if(is_login) {
+        if(!is_login) {
             php_session.update('ordle-cart', {
                 products: {}
             }).then(()=>{
@@ -101,7 +108,9 @@ window.addToCartItem = (box) => {
                         }
                     });
                 }else {
-                    add_to_cart(pid, price, 1);
+                    add_to_cart(pid, price, 1).then(res=>{
+                        location.reload();
+                    });
                 }
             });
         }
@@ -115,7 +124,7 @@ window.addToCartItem = (box) => {
                 });
             }else {
                 add_to_cart(pid, price, 1).then(()=>{
-                    location.href = 'create-account';
+                    location.href = site_url+'create-account';
                 });
             }
         }
@@ -155,7 +164,8 @@ window.removeCartItem = async (product_id, prompt_confirm = true) => {
 
 
         if (response.ok) {
-            reloadCart();
+            //reloadCart();
+            location.reload();
         } else {
             throw new Error(data.message || 'Unable to remove item.');
         }
@@ -169,7 +179,8 @@ window.removeCartItem = async (product_id, prompt_confirm = true) => {
 };
 
 window.reloadCart = async function() {
-    reloadElement('.head-user-info,.basket-badge-container, .basket-subtotal-price, #side-cart-wrapper,.product-checkout,#shop-category-archieve');
+    reloadElement('.head-user-info,.basket-badge-container, .basket-subtotal-price, #side-cart-wrapper,.product-checkout,#shop-category-archieve,.single-product-wrap');
+    stepper_init();
 }
 
 window.cart_toggle = (state = null) => {

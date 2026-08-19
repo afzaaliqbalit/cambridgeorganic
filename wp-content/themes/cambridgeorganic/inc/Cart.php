@@ -48,6 +48,10 @@ class Cart
         $product = new Products();
         $product_info = $product->getProduct($key);
 
+        if(empty($product_info['id'])) {
+            return false;
+        }
+
         if (isset($cart[$key])) {
             $cart['products'][$key]['cart_quantity'] += $value['cart_quantity'] ?? 1;
         } else {
@@ -139,7 +143,9 @@ class Cart
         $total = 0;
         if(!empty($cart['products'])) {
             foreach($cart['products'] as $item) {
+                if(!empty($item['net_selling_price'])) {
                 $total += $item['net_selling_price'] * $item['cart_quantity'];
+                }
             }
         }
         return $total;

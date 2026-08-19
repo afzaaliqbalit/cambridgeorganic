@@ -200,7 +200,7 @@
             const parent = guestPostcode.parentElement;
             const errorDiv = document.createElement('div');
             errorDiv.className = 'error_message';
-            errorDiv.textContent = 'Please enter a valid UK postcode';
+            errorDiv.textContent = 'Postcode is invalid';
             parent.appendChild(errorDiv);
             guestPostcode.classList.add('is-invalid');
 
@@ -326,7 +326,7 @@
                                 reloadCart().then(function() {
                                     box.classList.remove('loading');
                                 });
-                                location.href = 'create-account';
+                                location.href = site_url+'create-account';
                             });
                         }
                     });
@@ -346,7 +346,7 @@
                                 reloadCart().then(function() {
                                     box.closest('.catalog-boxes').classList.remove('loading');
                                 });
-                                location.href = 'create-account';
+                                location.href = site_url+'create-account';
                             });
                         }
                     <?php

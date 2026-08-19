@@ -10,10 +10,11 @@
 .icon-info {
   width: 26px;
   height: 24px;
-  background-image: url("../images/exclamation.svg");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
+  mask-image: url("../images/exclamation.svg");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  background-color: #000;
   display: inline-block;
 }
 
@@ -29,6 +30,17 @@
   &.white {
     background-color: #fff;
   }
+}
+
+.icon-arrow {
+  width: 26px;
+  height: 24px;
+  mask-image: url("../images/arrow.svg");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  background-color: #000;
+  display: inline-block;
 }
 
 .icon-check-circle-fill {
